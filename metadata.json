@@ -1,0 +1,6 @@
+{
+  "name": "Live Odds Actuary",
+  "description": "Профессиональное математическое веб-приложение для актуарного анализа лайв-линий футбола",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
