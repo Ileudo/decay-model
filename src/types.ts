@@ -26,6 +26,8 @@ export interface PreMatchResult {
 
 export interface LiveResult {
   decayFactor: number;
+  rem_xG1: number;
+  rem_xG2: number;
   kCalculated: number;
   kFairTime: number;
   kLive: number;
@@ -42,4 +44,5 @@ export interface MinuteRow {
   ah2_0: number;
   ah1_025: number;
   ah2_025: number;
+  totalXg: number;
 }

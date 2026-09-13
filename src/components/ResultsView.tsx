@@ -68,10 +68,13 @@ export const ResultsView: React.FC<ResultsViewProps> = ({ preMatch, live }) => {
         </div>
         <div className="bg-white p-4 grid grid-cols-2 lg:grid-cols-4 gap-3">
           <div>
-            <div className="text-[10px] text-zinc-500 uppercase font-semibold tracking-wider mb-1 flex items-center gap-1" title="Decay Factor">
-              Фактор распада
+            <div className="text-[10px] text-zinc-500 uppercase font-semibold tracking-wider mb-1 flex items-center gap-1" title="Remaining Expected Goals">
+              Остаток xG (П1 / П2)
             </div>
-            <div className="text-lg font-medium text-zinc-900">{live.decayFactor.toFixed(3)}</div>
+            <div className="text-lg font-medium text-zinc-900">{live.rem_xG1.toFixed(2)} <span className="text-zinc-400 text-sm font-normal">/</span> {live.rem_xG2.toFixed(2)}</div>
+            <div className="text-[10px] text-zinc-400 mt-0.5 font-medium">
+              Суммарный тотал: {(live.rem_xG1 + live.rem_xG2).toFixed(2)}
+            </div>
           </div>
           <div>
             <div className="text-[10px] text-zinc-500 uppercase font-semibold tracking-wider mb-1">Расчетная линия</div>

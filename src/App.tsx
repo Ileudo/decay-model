@@ -46,6 +46,8 @@ export default function App() {
         
         setLive({
           decayFactor: liveOdds.decayFactor,
+          rem_xG1: liveOdds.rem_xG1,
+          rem_xG2: liveOdds.rem_xG2,
           kCalculated,
           kFairTime,
           kLive: input.kLive,
@@ -66,7 +68,8 @@ export default function App() {
             ah1_0: rowOdds.ah1_0,
             ah2_0: rowOdds.ah2_0,
             ah1_025: rowOdds.ah1_025,
-            ah2_025: rowOdds.ah2_025
+            ah2_025: rowOdds.ah2_025,
+            totalXg: rowOdds.rem_xG1 + rowOdds.rem_xG2
           });
         };
 

@@ -211,6 +211,7 @@ export function calculateLiveOdds(
     ah1_0, ah2_0, ah1_025, ah2_025,
     p1Fair, xFair, p2Fair,
     ah1_0Fair, ah2_0Fair, ah1_025Fair, ah2_025Fair,
-    decayFactor
+    decayFactor,
+    rem_xG1, rem_xG2
   };
 }
