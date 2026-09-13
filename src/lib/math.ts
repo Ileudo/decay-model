@@ -15,8 +15,8 @@ export function solvePreMatch(p1Odds: number, xOdds: number, p2Odds: number) {
 export function getShare(minute: number, period: 1 | 2 = minute <= 45 ? 1 : 2): number {
   if (period === 1) {
     const safeMinute = Math.min(minute, 47.499);
-    // Calibrated: 0.63 at HT, linear decay in 1st half
-    return 0.63 + 0.37 * ((47.5 - safeMinute) / 47.5);
+    // Calibrated: 0.62 at HT, linear decay in 1st half
+    return 0.62 + 0.38 * ((47.5 - safeMinute) / 47.5);
   } else {
     // 2nd half calibrated for 94 min end time (49 mins duration from 46 to 94)
     const safeMinute = Math.min(minute, 93.999);
@@ -25,9 +25,10 @@ export function getShare(minute: number, period: 1 | 2 = minute <= 45 ? 1 : 2): 
     // The "80th-minute cliff": bookmakers hold the draw odds relatively stable 
     // until about the 80th minute (r ~ 0.3) to induce liquidity, 
     // and then aggressively accelerate the decay (crash the odds) to manage liability.
-    const cliff = 0.25 * (1.0 - Math.min(1.0, r / 0.3));
+    // Softened cliff max to 0.15 based on Tottenham-Everton tail-end data.
+    const cliff = 0.15 * (1.0 - Math.min(1.0, r / 0.3));
     
-    return 0.63 * Math.pow(r, 0.85 + cliff);
+    return 0.62 * Math.pow(r, 0.85 + cliff);
   }
 }
 
