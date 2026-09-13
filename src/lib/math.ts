@@ -90,9 +90,24 @@ export function calculateLiveOdds(xG1: number, xG2: number, score1: number, scor
   const share = getShare(minute, period);
   const decayFactor = share;
   
-  // Remaining expected goals
-  const rem_xG1 = xG1 * decayFactor;
-  const rem_xG2 = xG2 * decayFactor;
+  // Base Remaining expected goals
+  let rem_xG1 = xG1 * decayFactor;
+  let rem_xG2 = xG2 * decayFactor;
+
+  // Game State (Score) Modifier:
+  // When a team is losing, they attack more (xG goes up slightly).
+  // When a team is winning, they defend more (xG goes down slightly).
+  // This simulates the "Game State" effect in live football betting.
+  const goalDifference = score1 - score2;
+  
+  // Moderate the effect to avoid extreme skews (max 1.25 multiplier)
+  if (goalDifference < 0) { // Team 1 is losing
+    rem_xG1 *= 1.15; // Losing team pushes forward
+    rem_xG2 *= 0.85; // Winning team sits back
+  } else if (goalDifference > 0) { // Team 1 is winning
+    rem_xG1 *= 0.85; // Winning team sits back
+    rem_xG2 *= 1.15; // Losing team pushes forward
+  }
   
   // Match outcomes for the remainder of the match (0:0 virtual start) - used for live AH
   const rem = calculateMatchOutcomes(rem_xG1, rem_xG2, 0, 0);
