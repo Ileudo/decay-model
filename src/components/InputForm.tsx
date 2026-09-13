@@ -64,56 +64,65 @@ export const InputForm: React.FC<InputFormProps> = ({ onCalculate, isLoading }) 
         />
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+      <div className="space-y-6 mb-6">
+        {/* Прематч 1X2 */}
         <div className="space-y-4">
           <h3 className="font-medium text-zinc-900 border-b border-zinc-100 pb-2">Прематч 1X2</h3>
-          <div>
-            <label className="block text-sm font-medium text-zinc-600 mb-1">П1 (Home)</label>
-            <input type="number" step="0.01" name="p1" value={formData.p1} onChange={handleChange} className="w-full px-3 py-2 border border-zinc-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors" required />
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-zinc-600 mb-1">X (Draw)</label>
-            <input type="number" step="0.01" name="x" value={formData.x} onChange={handleChange} className="w-full px-3 py-2 border border-zinc-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors" required />
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-zinc-600 mb-1">П2 (Away)</label>
-            <input type="number" step="0.01" name="p2" value={formData.p2} onChange={handleChange} className="w-full px-3 py-2 border border-zinc-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors" required />
+          <div className="grid grid-cols-3 gap-4">
+            <div>
+              <label className="block text-sm font-medium text-zinc-600 mb-1">П1 (Home)</label>
+              <input type="number" step="0.01" name="p1" value={formData.p1} onChange={handleChange} className="w-full px-3 py-2 border border-zinc-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors" required />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-zinc-600 mb-1">X (Draw)</label>
+              <input type="number" step="0.01" name="x" value={formData.x} onChange={handleChange} className="w-full px-3 py-2 border border-zinc-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors" required />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-zinc-600 mb-1">П2 (Away)</label>
+              <input type="number" step="0.01" name="p2" value={formData.p2} onChange={handleChange} className="w-full px-3 py-2 border border-zinc-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors" required />
+            </div>
           </div>
         </div>
 
+        {/* Тотал */}
         <div className="space-y-4">
           <h3 className="font-medium text-zinc-900 border-b border-zinc-100 pb-2">Тотал</h3>
-          <div>
-            <label className="block text-sm font-medium text-zinc-600 mb-1">Значение Тотала</label>
-            <input type="number" step="0.25" name="total" value={formData.total} onChange={handleChange} className="w-full px-3 py-2 border border-zinc-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors" required />
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-zinc-600 mb-1">Кэф ТМ (Under)</label>
-            <input type="number" step="0.01" name="underOdds" value={formData.underOdds} onChange={handleChange} className="w-full px-3 py-2 border border-zinc-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors" required />
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <label className="block text-sm font-medium text-zinc-600 mb-1">Значение Тотала</label>
+              <input type="number" step="0.25" name="total" value={formData.total} onChange={handleChange} className="w-full px-3 py-2 border border-zinc-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors" required />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-zinc-600 mb-1">Кэф ТМ (Under)</label>
+              <input type="number" step="0.01" name="underOdds" value={formData.underOdds} onChange={handleChange} className="w-full px-3 py-2 border border-zinc-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors" required />
+            </div>
           </div>
         </div>
 
+        {/* Лайв Ситуация */}
         <div className="space-y-4">
           <h3 className="font-medium text-zinc-900 border-b border-zinc-100 pb-2">Лайв Ситуация</h3>
-          <div>
-            <label className="block text-sm font-medium text-zinc-600 mb-1">Текущая минута (1-90)</label>
-            <input type="number" step="1" min="1" max="90" name="minute" value={formData.minute} onChange={handleChange} className="w-full px-3 py-2 border border-zinc-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors" required />
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-zinc-600 mb-1">Тип ставки</label>
-            <select name="betType" value={formData.betType} onChange={handleChange} className="w-full px-3 py-2 border border-zinc-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors bg-white" required>
-              <option value="П1">П1</option>
-              <option value="X">X</option>
-              <option value="П2">П2</option>
-              <option value="Ф1(0)">Ф1(0)</option>
-              <option value="Ф2(0)">Ф2(0)</option>
-              <option value="Ф1(-0.25)">Ф1(-0.25)</option>
-              <option value="Ф2(-0.25)">Ф2(-0.25)</option>
-            </select>
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-zinc-600 mb-1">Pinnacle Кэф (K_live)</label>
-            <input type="number" step="0.01" name="kLive" value={formData.kLive} onChange={handleChange} className="w-full px-3 py-2 border border-zinc-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors" required />
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+            <div>
+              <label className="block text-sm font-medium text-zinc-600 mb-1">Текущая минута (1-90)</label>
+              <input type="number" step="1" min="1" max="90" name="minute" value={formData.minute} onChange={handleChange} className="w-full px-3 py-2 border border-zinc-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors" required />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-zinc-600 mb-1">Тип ставки</label>
+              <select name="betType" value={formData.betType} onChange={handleChange} className="w-full px-3 py-2 border border-zinc-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors bg-white" required>
+                <option value="П1">П1</option>
+                <option value="X">X</option>
+                <option value="П2">П2</option>
+                <option value="Ф1(0)">Ф1(0)</option>
+                <option value="Ф2(0)">Ф2(0)</option>
+                <option value="Ф1(-0.25)">Ф1(-0.25)</option>
+                <option value="Ф2(-0.25)">Ф2(-0.25)</option>
+              </select>
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-zinc-600 mb-1">Pinnacle Кэф (K_live)</label>
+              <input type="number" step="0.01" name="kLive" value={formData.kLive} onChange={handleChange} className="w-full px-3 py-2 border border-zinc-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors" required />
+            </div>
           </div>
         </div>
       </div>
