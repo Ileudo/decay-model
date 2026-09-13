@@ -16,6 +16,8 @@ export const InputForm: React.FC<InputFormProps> = ({ onCalculate, isLoading }) 
     total: 3.0,
     underOdds: 1.86,
     minute: 20,
+    score1: 0,
+    score2: 0,
     betType: 'Ф2(0)',
     kLive: 2.13,
   });
@@ -102,10 +104,18 @@ export const InputForm: React.FC<InputFormProps> = ({ onCalculate, isLoading }) 
         {/* Лайв Ситуация */}
         <div className="space-y-2">
           <h3 className="text-sm font-medium text-zinc-900 border-b border-zinc-100 pb-1">Лайв Ситуация</h3>
-          <div className="grid grid-cols-3 gap-3">
+          <div className="grid grid-cols-5 gap-3">
             <div>
               <label className="block text-xs font-medium text-zinc-500 mb-1">Минута (1-90)</label>
               <input type="number" step="1" min="1" max="90" name="minute" value={formData.minute} onChange={handleChange} className="w-full px-2 py-1.5 text-sm border border-zinc-300 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors" required />
+            </div>
+            <div>
+              <label className="block text-[10px] font-medium text-zinc-500 mb-1 leading-tight">Счет (Хозяева)</label>
+              <input type="number" step="1" min="0" name="score1" value={formData.score1} onChange={handleChange} className="w-full px-2 py-1.5 text-sm border border-zinc-300 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors" required />
+            </div>
+            <div>
+              <label className="block text-[10px] font-medium text-zinc-500 mb-1 leading-tight">Счет (Гости)</label>
+              <input type="number" step="1" min="0" name="score2" value={formData.score2} onChange={handleChange} className="w-full px-2 py-1.5 text-sm border border-zinc-300 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors" required />
             </div>
             <div>
               <label className="block text-xs font-medium text-zinc-500 mb-1">Тип ставки</label>

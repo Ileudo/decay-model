@@ -7,6 +7,8 @@ export interface MatchInput {
   total: number;
   underOdds: number;
   minute: number;
+  score1: number;
+  score2: number;
   betType: BetType;
   kLive: number;
 }
@@ -16,6 +18,8 @@ export interface PreMatchResult {
   trueP1: number;
   trueX: number;
   trueP2: number;
+  xG1: number;
+  xG2: number;
 }
 
 export interface LiveResult {

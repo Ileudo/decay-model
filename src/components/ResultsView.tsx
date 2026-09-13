@@ -28,7 +28,7 @@ export const ResultsView: React.FC<ResultsViewProps> = ({ preMatch, live }) => {
             Прематчевый Расклад
           </h3>
         </div>
-        <div className="p-4 grid grid-cols-2 md:grid-cols-4 gap-3">
+        <div className="p-4 grid grid-cols-2 md:grid-cols-6 gap-3">
           <div className="bg-zinc-50 p-3 rounded-lg">
             <div className="text-[10px] text-zinc-500 uppercase font-semibold tracking-wider mb-1">Маржа ПМ</div>
             <div className="text-lg font-bold text-zinc-900">{(preMatch.margin * 100).toFixed(2)}%</div>
@@ -44,6 +44,14 @@ export const ResultsView: React.FC<ResultsViewProps> = ({ preMatch, live }) => {
           <div className="bg-zinc-50 p-3 rounded-lg">
             <div className="text-[10px] text-zinc-500 uppercase font-semibold tracking-wider mb-1">True П2</div>
             <div className="text-lg font-bold text-zinc-900">{(preMatch.trueP2 * 100).toFixed(1)}%</div>
+          </div>
+          <div className="bg-zinc-50 p-3 rounded-lg border-l-2 border-indigo-200">
+            <div className="text-[10px] text-zinc-500 uppercase font-semibold tracking-wider mb-1">xG П1</div>
+            <div className="text-lg font-bold text-zinc-900">{preMatch.xG1.toFixed(2)}</div>
+          </div>
+          <div className="bg-zinc-50 p-3 rounded-lg border-r-2 border-indigo-200">
+            <div className="text-[10px] text-zinc-500 uppercase font-semibold tracking-wider mb-1">xG П2</div>
+            <div className="text-lg font-bold text-zinc-900">{preMatch.xG2.toFixed(2)}</div>
           </div>
         </div>
       </div>

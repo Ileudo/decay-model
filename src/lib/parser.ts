@@ -2,7 +2,14 @@ import { MatchInput, BetType } from '../types';
 
 export function parseRawText(text: string): Partial<MatchInput> {
   const result: Partial<MatchInput> = {};
-  
+
+  // Score
+  const scoreMatch = text.match(/Текущий счет игры:\s*(\d+):(\d+)/i) || text.match(/Счет:\s*(\d+):(\d+)/i);
+  if (scoreMatch) {
+    result.score1 = parseInt(scoreMatch[1], 10);
+    result.score2 = parseInt(scoreMatch[2], 10);
+  }
+
   // Minute
   const minuteMatch = text.match(/Время:\s*(\d+)\s*мин/i) || text.match(/(\d+)\s*мин/i);
   if (minuteMatch) result.minute = parseInt(minuteMatch[1], 10);
