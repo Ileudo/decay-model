@@ -39,8 +39,8 @@ export function parseRawText(text: string): Partial<MatchInput> {
     else if (rawType.includes('ФОРА2 (0)') || rawType.includes('Ф2(0)')) result.betType = 'Ф2(0)';
     else if (rawType.includes('ФОРА1 (-0.25)') || rawType.includes('Ф1(-0.25)')) result.betType = 'Ф1(-0.25)';
     else if (rawType.includes('ФОРА2 (-0.25)') || rawType.includes('Ф2(-0.25)')) result.betType = 'Ф2(-0.25)';
-    else if (rawType.includes('П1')) result.betType = 'П1';
-    else if (rawType.includes('П2')) result.betType = 'П2';
+    else if (rawType.includes('ФОРА1 (-0.5)') || rawType.includes('Ф1(-0.5)') || rawType.includes('П1')) result.betType = 'П1';
+    else if (rawType.includes('ФОРА2 (-0.5)') || rawType.includes('Ф2(-0.5)') || rawType.includes('П2')) result.betType = 'П2';
     else if (rawType.includes(' X') || rawType.includes('НИЧЬЯ')) result.betType = 'X';
   } else {
     // Direct match anywhere in the text as fallback
@@ -48,6 +48,8 @@ export function parseRawText(text: string): Partial<MatchInput> {
     else if (text.match(/ФОРА2\s*\(0\)|Ф2\(0\)/i)) result.betType = 'Ф2(0)';
     else if (text.match(/ФОРА1\s*\(-0\.25\)|Ф1\(-0\.25\)/i)) result.betType = 'Ф1(-0.25)';
     else if (text.match(/ФОРА2\s*\(-0\.25\)|Ф2\(-0\.25\)/i)) result.betType = 'Ф2(-0.25)';
+    else if (text.match(/ФОРА1\s*\(-0\.5\)|Ф1\(-0\.5\)/i)) result.betType = 'П1';
+    else if (text.match(/ФОРА2\s*\(-0\.5\)|Ф2\(-0\.5\)/i)) result.betType = 'П2';
   }
 
   // Live odds (K_live)
