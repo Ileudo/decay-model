@@ -20,6 +20,8 @@ export const InputForm: React.FC<InputFormProps> = ({ onCalculate, isLoading }) 
     score2: 0,
     betType: 'Ф2(0)',
     kLive: 2.13,
+    intensity1: 1.0,
+    intensity2: 1.0,
   });
   
   const [rawText, setRawText] = useState('');
@@ -132,6 +134,38 @@ export const InputForm: React.FC<InputFormProps> = ({ onCalculate, isLoading }) 
             <div>
               <label className="block text-xs font-medium text-zinc-500 mb-1">Кэф (K_live)</label>
               <input type="number" step="0.01" name="kLive" value={formData.kLive} onChange={handleChange} className="w-full px-2 py-1.5 text-sm border border-zinc-300 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors" required />
+            </div>
+          </div>
+        </div>
+
+        {/* Ручная корректировка тактики */}
+        <div className="space-y-2 pt-2 border-t border-zinc-100">
+          <div className="flex items-center justify-between">
+            <h3 className="text-sm font-medium text-zinc-900">Лайв Активность (Тактика)</h3>
+            <span className="text-[10px] text-zinc-400 bg-zinc-100 px-2 py-0.5 rounded-full">100% = Стандартная Модель</span>
+          </div>
+          <div className="grid grid-cols-2 gap-4">
+            <div className="space-y-1">
+              <div className="flex justify-between items-center text-xs">
+                <label className="font-medium text-zinc-600">Хозяева (П1)</label>
+                <span className={`font-mono ${formData.intensity1 > 1.0 ? 'text-green-600' : formData.intensity1 < 1.0 ? 'text-red-500' : 'text-zinc-500'}`}>{Math.round(formData.intensity1 * 100)}%</span>
+              </div>
+              <input type="range" name="intensity1" min="0.1" max="5.0" step="0.1" value={formData.intensity1} onChange={handleChange} className="w-full h-1.5 bg-zinc-200 rounded-lg appearance-none cursor-pointer accent-indigo-500" />
+              <div className="flex justify-between text-[10px] text-zinc-400">
+                <span>Автобус</span>
+                <span>Навал / +Вр</span>
+              </div>
+            </div>
+            <div className="space-y-1">
+              <div className="flex justify-between items-center text-xs">
+                <label className="font-medium text-zinc-600">Гости (П2)</label>
+                <span className={`font-mono ${formData.intensity2 > 1.0 ? 'text-green-600' : formData.intensity2 < 1.0 ? 'text-red-500' : 'text-zinc-500'}`}>{Math.round(formData.intensity2 * 100)}%</span>
+              </div>
+              <input type="range" name="intensity2" min="0.1" max="5.0" step="0.1" value={formData.intensity2} onChange={handleChange} className="w-full h-1.5 bg-zinc-200 rounded-lg appearance-none cursor-pointer accent-indigo-500" />
+              <div className="flex justify-between text-[10px] text-zinc-400">
+                <span>Автобус</span>
+                <span>Навал / +Вр</span>
+              </div>
             </div>
           </div>
         </div>

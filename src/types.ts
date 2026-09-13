@@ -11,6 +11,8 @@ export interface MatchInput {
   score2: number;
   betType: BetType;
   kLive: number;
+  intensity1: number;
+  intensity2: number;
 }
 
 export interface PreMatchResult {

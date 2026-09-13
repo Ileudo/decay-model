@@ -86,7 +86,17 @@ export function getShare(minute: number, period: 1 | 2 = minute <= 45 ? 1 : 2): 
   }
 }
 
-export function calculateLiveOdds(xG1: number, xG2: number, score1: number, score2: number, minute: number, marginSum: number, period: 1 | 2 = minute <= 45 ? 1 : 2) {
+export function calculateLiveOdds(
+  xG1: number, 
+  xG2: number, 
+  score1: number, 
+  score2: number, 
+  minute: number, 
+  marginSum: number, 
+  period: 1 | 2 = minute <= 45 ? 1 : 2,
+  intensity1: number = 1.0,
+  intensity2: number = 1.0
+) {
   const share = getShare(minute, period);
   const decayFactor = share;
   
@@ -95,19 +105,68 @@ export function calculateLiveOdds(xG1: number, xG2: number, score1: number, scor
   let rem_xG2 = xG2 * decayFactor;
 
   // Game State (Score) Modifier:
-  // When a team is losing, they attack more (xG goes up slightly).
-  // When a team is winning, they defend more (xG goes down slightly).
-  // This simulates the "Game State" effect in live football betting.
+  // Dynamic calibration based on Pinnacle data (0:1 scenario, 11v11).
+  // The multipliers for remaining xG depend on the initial strength ratio (xG1/xG2).
+  // A heavy favorite pushes less aggressively when losing (M1 ~ 0.95) because they are already at peak capacity
+  // and the opponent parks the bus heavily (M2 ~ 0.70).
+  // A slight favorite pushes harder when losing (M1 ~ 1.11), and the opponent defends less deeply (M2 ~ 0.82).
+  
   const goalDifference = score1 - score2;
   
-  // Moderate the effect to avoid extreme skews (max 1.25 multiplier)
-  if (goalDifference < 0) { // Team 1 is losing
-    rem_xG1 *= 1.15; // Losing team pushes forward
-    rem_xG2 *= 0.85; // Winning team sits back
-  } else if (goalDifference > 0) { // Team 1 is winning
-    rem_xG1 *= 0.85; // Winning team sits back
-    rem_xG2 *= 1.15; // Losing team pushes forward
+  if (goalDifference !== 0) {
+    const strengthRatio = Math.max(0.5, Math.min(3.0, xG1 / xG2)); // Clamp ratio to avoid extremes
+    
+    // Base formula derived from empirical regression:
+    // M1 (Losing team) increases as they are stronger, but decreases as they are weaker.
+    let mLosing = 1.40 - (0.26 * strengthRatio);
+    
+    // M2 (Winning team) depends on if they are the favorite or the underdog.
+    let mWinning = 1.0;
+    if (strengthRatio > 1.0) {
+      // Losing team is favorite -> Winning team is underdog (parks the bus)
+      mWinning = 1.0 - (0.17 * strengthRatio);
+    } else {
+      // Losing team is underdog -> Winning team is favorite (controls the game, doesn't panic)
+      mWinning = 0.80 + (0.20 * strengthRatio);
+    }
+    
+    // Second half escalation ("Panic" and "Desperation")
+    if (minute > 45) {
+      const t2 = (minute - 45) / 45.0; // 0.0 to 1.0 in second half
+      mLosing += (t2 * 0.50); 
+      mWinning += (t2 * 0.25); 
+    }
+    
+    // Apply modifiers based on who is winning/losing
+    if (goalDifference < 0) { // Team 1 is losing
+      rem_xG1 *= mLosing; 
+      rem_xG2 *= mWinning; 
+    } else { // Team 1 is winning
+      // If team 1 is winning, the "strength ratio" from the perspective of the losing team (Team 2) is inverted.
+      const invRatio = Math.max(0.5, Math.min(3.0, xG2 / xG1));
+      let mLosingInv = 1.40 - (0.26 * invRatio);
+      
+      let mWinningInv = 1.0;
+      if (invRatio > 1.0) {
+        mWinningInv = 1.0 - (0.17 * invRatio);
+      } else {
+        mWinningInv = 0.80 + (0.20 * invRatio);
+      }
+      
+      if (minute > 45) {
+        const t2 = (minute - 45) / 45.0; // 0.0 to 1.0 in second half
+        mLosingInv += (t2 * 0.50); 
+        mWinningInv += (t2 * 0.25); 
+      }
+      
+      rem_xG1 *= mWinningInv; 
+      rem_xG2 *= mLosingInv; 
+    }
   }
+
+  // Apply user-defined tactical intensities
+  rem_xG1 *= intensity1;
+  rem_xG2 *= intensity2;
   
   // Match outcomes for the remainder of the match (0:0 virtual start) - used for live AH
   const rem = calculateMatchOutcomes(rem_xG1, rem_xG2, 0, 0);
