@@ -48,27 +48,30 @@ export function calculateLiveOdds(trueP1: number, trueX: number, trueP2: number,
   const liveP1 = remainder * (trueP1 / p1p2Sum);
   const liveP2 = remainder * (trueP2 / p1p2Sum);
   
+  const clamp = (val: number) => Math.max(1.01, val);
+
   // Odds WITH margin (simulated bookmaker line)
-  const p1 = 1 / (liveP1 * marginSum);
-  const x = 1 / (livePX * marginSum);
-  const p2 = 1 / (liveP2 * marginSum);
+  const p1 = clamp(1 / (liveP1 * marginSum));
+  const x = clamp(1 / (livePX * marginSum));
+  const p2 = clamp(1 / (liveP2 * marginSum));
   
-  const ah1_0 = 1 / ((liveP1 / (liveP1 + liveP2)) * marginSum);
-  const ah2_0 = 1 / ((liveP2 / (liveP1 + liveP2)) * marginSum);
+  const ah1_0 = clamp(1 / ((liveP1 / (liveP1 + liveP2)) * marginSum));
+  const ah2_0 = clamp(1 / ((liveP2 / (liveP1 + liveP2)) * marginSum));
   
-  const ah1_025 = 1 / ((liveP1 / (1 - 0.5 * livePX)) * marginSum);
-  const ah2_025 = 1 / ((liveP2 / (1 - 0.5 * livePX)) * marginSum);
+  const ah1_025 = clamp(1 / ((liveP1 / (1 - 0.5 * livePX)) * marginSum));
+  const ah2_025 = clamp(1 / ((liveP2 / (1 - 0.5 * livePX)) * marginSum));
   
   // Fair Odds calculations (Algebraic direct)
-  const p1Fair = 1 / liveP1;
-  const xFair = 1 / livePX;
-  const p2Fair = 1 / liveP2;
+  const clampFair = (val: number) => Math.max(1.00, val);
+  const p1Fair = clampFair(1 / liveP1);
+  const xFair = clampFair(1 / livePX);
+  const p2Fair = clampFair(1 / liveP2);
   
-  const ah1_0Fair = (liveP1 + liveP2) / liveP1;
-  const ah2_0Fair = (liveP1 + liveP2) / liveP2;
+  const ah1_0Fair = clampFair((liveP1 + liveP2) / liveP1);
+  const ah2_0Fair = clampFair((liveP1 + liveP2) / liveP2);
   
-  const ah1_025Fair = (1 - 0.5 * livePX) / liveP1;
-  const ah2_025Fair = (1 - 0.5 * livePX) / liveP2;
+  const ah1_025Fair = clampFair((1 - 0.5 * livePX) / liveP1);
+  const ah2_025Fair = clampFair((1 - 0.5 * livePX) / liveP2);
   
   return {
     p1, x, p2,
