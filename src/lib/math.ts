@@ -15,10 +15,12 @@ export function solvePreMatch(p1Odds: number, xOdds: number, p2Odds: number) {
 export function getShare(minute: number, period: 1 | 2 = minute <= 45 ? 1 : 2): number {
   if (period === 1) {
     const safeMinute = Math.min(minute, 47.499);
-    return 0.54 + 0.46 * ((47.5 - safeMinute) / 47.5);
+    // Calibrated: 0.60 at HT, linear decay in 1st half
+    return 0.60 + 0.40 * ((47.5 - safeMinute) / 47.5);
   } else {
     const safeMinute = Math.min(minute, 95.999);
-    return 0.54 * Math.pow((96.0 - safeMinute) / 51.0, 1.1);
+    // Calibrated: 0.60 base at HT, exponent 0.95 for 2nd half
+    return 0.60 * Math.pow((96.0 - safeMinute) / 51.0, 0.95);
   }
 }
 
