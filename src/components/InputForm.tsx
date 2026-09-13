@@ -50,8 +50,8 @@ export const InputForm: React.FC<InputFormProps> = ({ onCalculate, isLoading }) 
   };
 
   return (
-    <form onSubmit={handleSubmit} className="bg-white rounded-xl shadow-sm border border-zinc-200 p-6">
-      <div className="bg-zinc-50 rounded-lg p-4 border border-zinc-200 mb-6 space-y-3">
+    <form onSubmit={handleSubmit} className="bg-white rounded-xl shadow-sm border border-zinc-200 p-5">
+      <div className="bg-zinc-50 rounded-lg p-3 border border-zinc-200 mb-5 space-y-2">
         <label className="block text-sm font-medium text-zinc-700 flex items-center gap-2">
           <Wand2 className="w-4 h-4 text-indigo-500" />
           Быстрый импорт из сигнала (Telegram)
@@ -60,56 +60,56 @@ export const InputForm: React.FC<InputFormProps> = ({ onCalculate, isLoading }) 
           value={rawText}
           onChange={handleTextChange}
           placeholder="Вставьте текст сигнала для автозаполнения..."
-          className="w-full h-24 px-3 py-2 text-sm border border-zinc-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors resize-none bg-white"
+          className="w-full h-16 px-3 py-2 text-sm border border-zinc-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors resize-none bg-white"
         />
       </div>
 
-      <div className="space-y-6 mb-6">
+      <div className="space-y-4 mb-5">
         {/* Прематч 1X2 */}
-        <div className="space-y-4">
-          <h3 className="font-medium text-zinc-900 border-b border-zinc-100 pb-2">Прематч 1X2</h3>
-          <div className="grid grid-cols-3 gap-4">
+        <div className="space-y-2">
+          <h3 className="text-sm font-medium text-zinc-900 border-b border-zinc-100 pb-1">Прематч 1X2</h3>
+          <div className="grid grid-cols-3 gap-3">
             <div>
-              <label className="block text-sm font-medium text-zinc-600 mb-1">П1 (Home)</label>
-              <input type="number" step="0.01" name="p1" value={formData.p1} onChange={handleChange} className="w-full px-3 py-2 border border-zinc-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors" required />
+              <label className="block text-xs font-medium text-zinc-500 mb-1">П1 (Home)</label>
+              <input type="number" step="0.01" name="p1" value={formData.p1} onChange={handleChange} className="w-full px-2 py-1.5 text-sm border border-zinc-300 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors" required />
             </div>
             <div>
-              <label className="block text-sm font-medium text-zinc-600 mb-1">X (Draw)</label>
-              <input type="number" step="0.01" name="x" value={formData.x} onChange={handleChange} className="w-full px-3 py-2 border border-zinc-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors" required />
+              <label className="block text-xs font-medium text-zinc-500 mb-1">X (Draw)</label>
+              <input type="number" step="0.01" name="x" value={formData.x} onChange={handleChange} className="w-full px-2 py-1.5 text-sm border border-zinc-300 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors" required />
             </div>
             <div>
-              <label className="block text-sm font-medium text-zinc-600 mb-1">П2 (Away)</label>
-              <input type="number" step="0.01" name="p2" value={formData.p2} onChange={handleChange} className="w-full px-3 py-2 border border-zinc-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors" required />
+              <label className="block text-xs font-medium text-zinc-500 mb-1">П2 (Away)</label>
+              <input type="number" step="0.01" name="p2" value={formData.p2} onChange={handleChange} className="w-full px-2 py-1.5 text-sm border border-zinc-300 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors" required />
             </div>
           </div>
         </div>
 
         {/* Тотал */}
-        <div className="space-y-4">
-          <h3 className="font-medium text-zinc-900 border-b border-zinc-100 pb-2">Тотал</h3>
-          <div className="grid grid-cols-2 gap-4">
+        <div className="space-y-2">
+          <h3 className="text-sm font-medium text-zinc-900 border-b border-zinc-100 pb-1">Тотал</h3>
+          <div className="grid grid-cols-2 gap-3">
             <div>
-              <label className="block text-sm font-medium text-zinc-600 mb-1">Значение Тотала</label>
-              <input type="number" step="0.25" name="total" value={formData.total} onChange={handleChange} className="w-full px-3 py-2 border border-zinc-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors" required />
+              <label className="block text-xs font-medium text-zinc-500 mb-1">Значение Тотала</label>
+              <input type="number" step="0.25" name="total" value={formData.total} onChange={handleChange} className="w-full px-2 py-1.5 text-sm border border-zinc-300 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors" required />
             </div>
             <div>
-              <label className="block text-sm font-medium text-zinc-600 mb-1">Кэф ТМ (Under)</label>
-              <input type="number" step="0.01" name="underOdds" value={formData.underOdds} onChange={handleChange} className="w-full px-3 py-2 border border-zinc-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors" required />
+              <label className="block text-xs font-medium text-zinc-500 mb-1">Кэф ТМ (Under)</label>
+              <input type="number" step="0.01" name="underOdds" value={formData.underOdds} onChange={handleChange} className="w-full px-2 py-1.5 text-sm border border-zinc-300 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors" required />
             </div>
           </div>
         </div>
 
         {/* Лайв Ситуация */}
-        <div className="space-y-4">
-          <h3 className="font-medium text-zinc-900 border-b border-zinc-100 pb-2">Лайв Ситуация</h3>
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+        <div className="space-y-2">
+          <h3 className="text-sm font-medium text-zinc-900 border-b border-zinc-100 pb-1">Лайв Ситуация</h3>
+          <div className="grid grid-cols-3 gap-3">
             <div>
-              <label className="block text-sm font-medium text-zinc-600 mb-1">Текущая минута (1-90)</label>
-              <input type="number" step="1" min="1" max="90" name="minute" value={formData.minute} onChange={handleChange} className="w-full px-3 py-2 border border-zinc-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors" required />
+              <label className="block text-xs font-medium text-zinc-500 mb-1">Минута (1-90)</label>
+              <input type="number" step="1" min="1" max="90" name="minute" value={formData.minute} onChange={handleChange} className="w-full px-2 py-1.5 text-sm border border-zinc-300 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors" required />
             </div>
             <div>
-              <label className="block text-sm font-medium text-zinc-600 mb-1">Тип ставки</label>
-              <select name="betType" value={formData.betType} onChange={handleChange} className="w-full px-3 py-2 border border-zinc-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors bg-white" required>
+              <label className="block text-xs font-medium text-zinc-500 mb-1">Тип ставки</label>
+              <select name="betType" value={formData.betType} onChange={handleChange} className="w-full px-2 py-1.5 text-sm border border-zinc-300 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors bg-white" required>
                 <option value="П1">П1</option>
                 <option value="X">X</option>
                 <option value="П2">П2</option>
@@ -120,8 +120,8 @@ export const InputForm: React.FC<InputFormProps> = ({ onCalculate, isLoading }) 
               </select>
             </div>
             <div>
-              <label className="block text-sm font-medium text-zinc-600 mb-1">Pinnacle Кэф (K_live)</label>
-              <input type="number" step="0.01" name="kLive" value={formData.kLive} onChange={handleChange} className="w-full px-3 py-2 border border-zinc-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors" required />
+              <label className="block text-xs font-medium text-zinc-500 mb-1">Кэф (K_live)</label>
+              <input type="number" step="0.01" name="kLive" value={formData.kLive} onChange={handleChange} className="w-full px-2 py-1.5 text-sm border border-zinc-300 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors" required />
             </div>
           </div>
         </div>
@@ -130,7 +130,7 @@ export const InputForm: React.FC<InputFormProps> = ({ onCalculate, isLoading }) 
       <button
         type="submit"
         disabled={isLoading}
-        className="w-full bg-zinc-900 hover:bg-zinc-800 text-white font-medium py-3 rounded-lg transition-colors flex items-center justify-center space-x-2 disabled:opacity-70 disabled:cursor-not-allowed"
+        className="w-full bg-zinc-900 hover:bg-zinc-800 text-white font-medium py-2 rounded-lg transition-colors flex items-center justify-center space-x-2 disabled:opacity-70 disabled:cursor-not-allowed"
       >
         {isLoading ? (
           <>
