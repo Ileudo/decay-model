@@ -10,10 +10,12 @@ export default function App() {
   const [isCalculating, setIsCalculating] = useState(false);
   const [preMatch, setPreMatch] = useState<PreMatchResult | null>(null);
   const [live, setLive] = useState<LiveResult | null>(null);
+  const [inputData, setInputData] = useState<MatchInput | null>(null);
   const [tableData, setTableData] = useState<MinuteRow[]>([]);
 
   const handleCalculate = async (input: MatchInput) => {
     setIsCalculating(true);
+    setInputData(input);
     
     // Use a short timeout to allow UI to render loading state
     setTimeout(() => {
@@ -109,7 +111,7 @@ export default function App() {
       </header>
 
       <main className="max-w-7xl mx-auto px-4 lg:px-6 pt-3 pb-8 space-y-3">
-        <ResultsView preMatch={preMatch} live={live} />
+        <ResultsView preMatch={preMatch} live={live} inputData={inputData} />
         
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 lg:gap-6">
           <div className="lg:col-span-4">

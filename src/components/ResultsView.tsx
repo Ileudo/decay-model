@@ -5,10 +5,11 @@ import { TrendingDown, TrendingUp, AlertCircle, CheckCircle2 } from 'lucide-reac
 interface ResultsViewProps {
   preMatch: PreMatchResult | null;
   live: LiveResult | null;
+  inputData: MatchInput | null;
 }
 
-export const ResultsView: React.FC<ResultsViewProps> = ({ preMatch, live }) => {
-  if (!preMatch || !live) {
+export const ResultsView: React.FC<ResultsViewProps> = ({ preMatch, live, inputData }) => {
+  if (!preMatch || !live || !inputData) {
     return (
       <div className="bg-white rounded-lg shadow-sm border border-zinc-200 p-2.5 flex items-center gap-2.5 text-zinc-500">
         <AlertCircle className="w-4 h-4 text-indigo-400" />
@@ -21,6 +22,36 @@ export const ResultsView: React.FC<ResultsViewProps> = ({ preMatch, live }) => {
 
   return (
     <div className="bg-white rounded-xl shadow-sm border border-zinc-200 overflow-hidden">
+      {/* Match Info Header */}
+      {inputData.team1 && inputData.team2 && (
+        <div className="bg-[#0b1120] text-white px-5 py-4 flex flex-col items-center justify-center gap-2">
+           <div className="flex items-center gap-3 text-lg sm:text-xl font-bold">
+             <span className="cursor-pointer hover:text-indigo-300 transition-colors" onClick={() => navigator.clipboard.writeText(inputData.team1!)} title="Скопировать">{inputData.team1}</span>
+             <span className="text-slate-500 font-normal text-sm">vs</span>
+             <span className="cursor-pointer hover:text-indigo-300 transition-colors" onClick={() => navigator.clipboard.writeText(inputData.team2!)} title="Скопировать">{inputData.team2}</span>
+           </div>
+           
+           <div className="text-4xl font-black text-emerald-400 font-mono tracking-[0.2em] mb-1">
+             {inputData.score1} : {inputData.score2}
+           </div>
+           
+           <div className="flex items-center gap-2">
+             <div className="bg-slate-800 text-slate-300 text-sm font-mono px-2.5 py-0.5 rounded border border-slate-700">
+               {inputData.minute}:00
+             </div>
+             <div className="text-xs text-slate-400">
+               (Осталось {Math.max(0, 90 - inputData.minute)} мин)
+             </div>
+           </div>
+           
+           {inputData.league && (
+             <div className="text-[10px] text-slate-500 font-medium uppercase tracking-wider mt-2 cursor-pointer hover:text-slate-300 transition-colors" onClick={() => navigator.clipboard.writeText(inputData.league!)} title="Скопировать лигу">
+               {inputData.league}
+             </div>
+           )}
+        </div>
+      )}
+
       {/* Top Banner: Verdict */}
       <div className={`px-5 py-4 border-b flex flex-col md:flex-row justify-between items-center gap-4 ${isValue ? 'bg-emerald-50 border-emerald-200' : 'bg-rose-50 border-rose-200'}`}>
         <div className="flex items-center gap-3">

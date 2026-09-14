@@ -3,6 +3,47 @@ import { MatchInput, BetType } from '../types';
 export function parseRawText(text: string): Partial<MatchInput> {
   const result: Partial<MatchInput> = {};
 
+  const lines = text.split('\n');
+  for (const line of lines) {
+    const trimmed = line.trim();
+    if (!trimmed) continue;
+    
+    // Parse league
+    if (trimmed.startsWith('🏆') || trimmed.startsWith('🏳️') || trimmed.toLowerCase().startsWith('турнир:') || trimmed.toLowerCase().startsWith('лига:')) {
+       result.league = trimmed.replace(/🏆|🏳️|Турнир:|Лига:/i, '').trim();
+    } 
+    // Parse teams
+    else if (trimmed.startsWith('⚽️') || trimmed.startsWith('⚔️') || trimmed.toLowerCase().startsWith('матч:')) {
+       const tMatch = trimmed.replace(/⚽️|⚔️|Матч:/i, '').split(/\s+-\s+|\s+vs\s+/i);
+       if (tMatch.length >= 2) {
+         result.team1 = tMatch[0].trim();
+         result.team2 = tMatch[1].trim();
+       }
+    }
+  }
+
+  // Generic fallback for teams if not found by prefix
+  if (!result.team1 || !result.team2) {
+    for (const line of lines) {
+      const trimmed = line.trim();
+      // Look for a line with " - " or " vs " that isn't about odds or score
+      if (
+        (trimmed.includes(' - ') || trimmed.toLowerCase().includes(' vs ')) &&
+        !trimmed.match(/\d:\d/) &&
+        !trimmed.toLowerCase().includes('фора') &&
+        !trimmed.toLowerCase().includes('тотал') &&
+        !trimmed.match(/П1|П2|ТМ|ТБ/i)
+      ) {
+        const tMatch = trimmed.split(/\s+-\s+|\s+vs\s+/i);
+        if (tMatch.length >= 2) {
+          result.team1 = tMatch[0].trim().replace(/^🏆|⚽️|🏳️|⚔️/, '').trim();
+          result.team2 = tMatch[1].trim();
+          break;
+        }
+      }
+    }
+  }
+
   // Score
   const scoreMatch = text.match(/Текущий счет игры:\s*(\d+):(\d+)/i) || text.match(/Счет:\s*(\d+):(\d+)/i);
   if (scoreMatch) {
