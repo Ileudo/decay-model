@@ -28,7 +28,7 @@ export const MinuteTable: React.FC<MinuteTableProps> = ({ data, currentMinute })
           <p className="text-[10px] text-zinc-500 mt-0.5">Естественное усыхание с шагом 1 минута</p>
         </div>
       </div>
-      <div className="overflow-x-auto h-[380px] overflow-y-auto relative">
+      <div className="overflow-x-auto h-[280px] overflow-y-auto relative">
         <table className="w-full text-sm text-left">
           <thead className="text-[11px] text-zinc-500 uppercase bg-zinc-50 sticky top-0 border-b border-zinc-200 z-10 shadow-sm">
             <tr>
