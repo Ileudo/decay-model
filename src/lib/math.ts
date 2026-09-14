@@ -241,9 +241,9 @@ export function autoCalibrate(
     for (let m2 = 0.1; m2 <= 3.0; m2 += 0.1) {
       const live = calculateLiveOdds(baseXG1, baseXG2, score1, score2, minute, liveMarginSum, period, m1, m2);
       
-      const err = Math.abs(live.p1Fair - targetTrueP1) + 
-                  Math.abs(live.xFair - targetTrueX) + 
-                  Math.abs(live.p2Fair - targetTrueP2);
+      const err = Math.abs(live.p1 - liveP1) + 
+                  Math.abs(live.x - liveX) + 
+                  Math.abs(live.p2 - liveP2);
                   
       if (err < bestErr) {
         bestErr = err;
@@ -261,9 +261,9 @@ export function autoCalibrate(
     for (let m2 = Math.max(0.1, coarseM2 - 0.1); m2 <= Math.min(3.0, coarseM2 + 0.1); m2 += 0.01) {
       const live = calculateLiveOdds(baseXG1, baseXG2, score1, score2, minute, liveMarginSum, period, m1, m2);
       
-      const err = Math.abs(live.p1Fair - targetTrueP1) + 
-                  Math.abs(live.xFair - targetTrueX) + 
-                  Math.abs(live.p2Fair - targetTrueP2);
+      const err = Math.abs(live.p1 - liveP1) + 
+                  Math.abs(live.x - liveX) + 
+                  Math.abs(live.p2 - liveP2);
                   
       if (err < bestErr) {
         bestErr = err;

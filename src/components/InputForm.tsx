@@ -47,11 +47,13 @@ export const InputForm: React.FC<InputFormProps> = ({ onCalculate, isLoading }) 
         p1, x, p2,
         formData.minute, formData.score1, formData.score2
       );
-      setFormData(prev => ({
-        ...prev,
+      const newData = {
+        ...formData,
         intensity1: m1,
         intensity2: m2
-      }));
+      };
+      setFormData(newData);
+      onCalculate(newData);
     }
   };
 
