@@ -140,10 +140,10 @@ export const InputForm: React.FC<InputFormProps> = ({ onCalculate, isLoading }) 
       {/* Live Situation */}
       <div className="bg-zinc-50/50 rounded-lg p-1.5 border border-zinc-100">
         <div className="text-[9px] font-bold text-zinc-400 uppercase tracking-wider mb-1 flex items-center">
-          Лайв Ситуация & Калибровка
+          Лайв Ситуация
           <div className="flex-1 border-b border-zinc-200 ml-2"></div>
         </div>
-        <div className="grid grid-cols-11 gap-1">
+        <div className="grid grid-cols-7 gap-1 mb-1.5">
           <div className="col-span-1">
             <label className="block text-[8px] text-zinc-500 mb-0.5">Мин</label>
             <input type="number" step="1" min="1" max="90" name="minute" value={formData.minute} onChange={handleChange} className="w-full px-1 py-1 text-[10px] border border-zinc-300 rounded focus:ring-1 focus:ring-indigo-500" required />
@@ -172,20 +172,20 @@ export const InputForm: React.FC<InputFormProps> = ({ onCalculate, isLoading }) 
             <label className="block text-[8px] font-bold text-indigo-600 mb-0.5">K_live</label>
             <input type="number" step="0.01" name="kLive" value={formData.kLive} onChange={handleChange} className="w-full px-1 py-1 text-[10px] font-bold text-indigo-700 border border-indigo-200 rounded focus:ring-1 focus:ring-indigo-500 bg-indigo-50/30" required />
           </div>
-          
-          <div className="col-span-4 grid grid-cols-3 gap-1 pl-1 border-l border-zinc-200 ml-1">
-            <div>
-              <label className="block text-[8px] font-bold text-blue-600/80 uppercase mb-0.5 tracking-wider truncate" title="Live П1 (Калибровка)">П1 (Кал)</label>
-              <input type="number" step="0.01" name="liveP1" value={formData.liveP1 || ''} onChange={handleChange} className="w-full px-1 py-1 text-[10px] border border-blue-200 rounded focus:ring-1 focus:ring-blue-500 bg-white" placeholder="—" />
-            </div>
-            <div>
-              <label className="block text-[8px] font-bold text-blue-600/80 uppercase mb-0.5 tracking-wider">X (Кал)</label>
-              <input type="number" step="0.01" name="liveX" value={formData.liveX || ''} onChange={handleChange} className="w-full px-1 py-1 text-[10px] border border-blue-200 rounded focus:ring-1 focus:ring-blue-500 bg-white" placeholder="—" />
-            </div>
-            <div>
-              <label className="block text-[8px] font-bold text-blue-600/80 uppercase mb-0.5 tracking-wider truncate" title="Live П2 (Калибровка)">П2 (Кал)</label>
-              <input type="number" step="0.01" name="liveP2" value={formData.liveP2 || ''} onChange={handleChange} className="w-full px-1 py-1 text-[10px] border border-blue-200 rounded focus:ring-1 focus:ring-blue-500 bg-white" placeholder="—" />
-            </div>
+        </div>
+        
+        <div className="grid grid-cols-3 gap-1 bg-blue-50/50 p-1.5 rounded border border-blue-100">
+          <div>
+            <label className="block text-[8px] font-bold text-blue-600/80 uppercase mb-0.5 tracking-wider truncate" title="Live П1 (Калибровка)">Live П1 (Калибровка)</label>
+            <input type="number" step="0.01" name="liveP1" value={formData.liveP1 || ''} onChange={handleChange} className="w-full px-1 py-1 text-[10px] border border-blue-200 rounded focus:ring-1 focus:ring-blue-500 bg-white" placeholder="—" />
+          </div>
+          <div>
+            <label className="block text-[8px] font-bold text-blue-600/80 uppercase mb-0.5 tracking-wider">Live X</label>
+            <input type="number" step="0.01" name="liveX" value={formData.liveX || ''} onChange={handleChange} className="w-full px-1 py-1 text-[10px] border border-blue-200 rounded focus:ring-1 focus:ring-blue-500 bg-white" placeholder="—" />
+          </div>
+          <div>
+            <label className="block text-[8px] font-bold text-blue-600/80 uppercase mb-0.5 tracking-wider truncate" title="Live П2 (Калибровка)">Live П2</label>
+            <input type="number" step="0.01" name="liveP2" value={formData.liveP2 || ''} onChange={handleChange} className="w-full px-1 py-1 text-[10px] border border-blue-200 rounded focus:ring-1 focus:ring-blue-500 bg-white" placeholder="—" />
           </div>
         </div>
       </div>
