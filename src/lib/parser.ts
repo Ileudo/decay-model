@@ -65,5 +65,13 @@ export function parseRawText(text: string): Partial<MatchInput> {
     result.kLive = parseFloat(kLiveMatch[1]);
   }
   
+  // Live 1X2 odds
+  const liveBlockMatch = text.match(/(?:сигнала|Live|текущие|сейчас)[\s\S]*?П1=([\d.]+),\s*X=([\d.]+),\s*П2=([\d.]+)/i);
+  if (liveBlockMatch) {
+    result.liveP1 = parseFloat(liveBlockMatch[1]);
+    result.liveX = parseFloat(liveBlockMatch[2]);
+    result.liveP2 = parseFloat(liveBlockMatch[3]);
+  }
+  
   return result;
 }

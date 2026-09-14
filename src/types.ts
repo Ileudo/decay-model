@@ -11,6 +11,9 @@ export interface MatchInput {
   score2: number;
   betType: BetType;
   kLive: number;
+  liveP1?: number;
+  liveX?: number;
+  liveP2?: number;
   intensity1: number;
   intensity2: number;
 }
