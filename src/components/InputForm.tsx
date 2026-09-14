@@ -150,7 +150,7 @@ export const InputForm: React.FC<InputFormProps> = ({ onCalculate, isLoading }) 
                 <label className="font-medium text-zinc-600">Хозяева (П1)</label>
                 <span className={`font-mono ${formData.intensity1 > 1.0 ? 'text-green-600' : formData.intensity1 < 1.0 ? 'text-red-500' : 'text-zinc-500'}`}>{Math.round(formData.intensity1 * 100)}%</span>
               </div>
-              <input type="range" name="intensity1" min="0.1" max="3.0" step="0.01" value={formData.intensity1} onChange={handleChange} className="w-full h-1.5 bg-zinc-200 rounded-lg appearance-none cursor-pointer accent-indigo-500" />
+              <input type="range" name="intensity1" min="0.5" max="2.0" step="0.01" value={formData.intensity1} onChange={handleChange} className="w-full h-1.5 bg-zinc-200 rounded-lg appearance-none cursor-pointer accent-indigo-500" />
               <div className="flex justify-between text-[10px] text-zinc-400">
                 <span>Автобус</span>
                 <span>Навал / +Вр</span>
@@ -161,7 +161,7 @@ export const InputForm: React.FC<InputFormProps> = ({ onCalculate, isLoading }) 
                 <label className="font-medium text-zinc-600">Гости (П2)</label>
                 <span className={`font-mono ${formData.intensity2 > 1.0 ? 'text-green-600' : formData.intensity2 < 1.0 ? 'text-red-500' : 'text-zinc-500'}`}>{Math.round(formData.intensity2 * 100)}%</span>
               </div>
-              <input type="range" name="intensity2" min="0.1" max="3.0" step="0.01" value={formData.intensity2} onChange={handleChange} className="w-full h-1.5 bg-zinc-200 rounded-lg appearance-none cursor-pointer accent-indigo-500" />
+              <input type="range" name="intensity2" min="0.5" max="2.0" step="0.01" value={formData.intensity2} onChange={handleChange} className="w-full h-1.5 bg-zinc-200 rounded-lg appearance-none cursor-pointer accent-indigo-500" />
               <div className="flex justify-between text-[10px] text-zinc-400">
                 <span>Автобус</span>
                 <span>Навал / +Вр</span>
