@@ -24,7 +24,6 @@ export const MinuteTable: React.FC<MinuteTableProps> = ({ data }) => {
               <th className="px-3 py-3 font-semibold text-right">П2</th>
               <th className="px-3 py-3 font-semibold text-right">Ф1(0)</th>
               <th className="px-3 py-3 font-semibold text-right">Ф2(0)</th>
-              <th className="px-3 py-3 font-semibold text-right">Ф1(-0.25)</th>
               <th className="px-3 py-3 font-semibold text-right">Ф2(-0.25)</th>
               <th className="px-3 py-3 font-semibold text-right border-l border-zinc-200">Ост. xG</th>
             </tr>
@@ -38,7 +37,6 @@ export const MinuteTable: React.FC<MinuteTableProps> = ({ data }) => {
                 <td className="px-3 py-2 text-right font-mono text-zinc-600">{row.p2.toFixed(3)}</td>
                 <td className="px-3 py-2 text-right font-mono text-indigo-600">{row.ah1_0.toFixed(3)}</td>
                 <td className="px-3 py-2 text-right font-mono text-indigo-600">{row.ah2_0.toFixed(3)}</td>
-                <td className="px-3 py-2 text-right font-mono text-emerald-600">{row.ah1_025.toFixed(3)}</td>
                 <td className="px-3 py-2 text-right font-mono text-emerald-600">{row.ah2_025.toFixed(3)}</td>
                 <td className="px-3 py-2 text-right font-mono text-amber-600 font-medium border-l border-zinc-100 bg-amber-50/30">{row.totalXg.toFixed(3)}</td>
               </tr>
