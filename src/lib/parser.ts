@@ -17,7 +17,7 @@ export function parseRawText(text: string): Partial<MatchInput> {
        const tMatch = trimmed.replace(/⚽️|⚔️|Матч:/i, '').split(/\s+-\s+|\s+vs\s+/i);
        if (tMatch.length >= 2) {
          result.team1 = tMatch[0].trim();
-         result.team2 = tMatch[1].trim();
+         result.team2 = tMatch[1].trim().replace(/\s*\(https?:\/\/[^)]+\)$/i, '').trim();
        }
     }
   }
@@ -37,7 +37,7 @@ export function parseRawText(text: string): Partial<MatchInput> {
         const tMatch = trimmed.split(/\s+-\s+|\s+vs\s+/i);
         if (tMatch.length >= 2) {
           result.team1 = tMatch[0].trim().replace(/^🏆|⚽️|🏳️|⚔️/, '').trim();
-          result.team2 = tMatch[1].trim();
+          result.team2 = tMatch[1].trim().replace(/\s*\(https?:\/\/[^)]+\)$/i, '').trim();
           break;
         }
       }
