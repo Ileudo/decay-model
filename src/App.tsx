@@ -110,10 +110,10 @@ export default function App() {
         </div>
       </header>
 
-      <main className="max-w-7xl mx-auto px-4 lg:px-6 pt-3 pb-8 space-y-3">
+      <main className="max-w-7xl mx-auto px-4 lg:px-6 pt-2 pb-8 space-y-2">
         <ResultsView preMatch={preMatch} live={live} inputData={inputData} />
         
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 lg:gap-6">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-3 lg:gap-4">
           <div className="lg:col-span-4">
             <InputForm onCalculate={handleCalculate} isLoading={isCalculating} />
           </div>
