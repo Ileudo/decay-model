@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { BetType, MatchInput } from '../types';
 import { Wand2 } from 'lucide-react';
 import { parseRawText } from '../lib/parser';
+import { autoCalibrate } from '../lib/math';
 
 interface InputFormProps {
   onCalculate: (data: MatchInput) => void;
@@ -25,6 +26,7 @@ export const InputForm: React.FC<InputFormProps> = ({ onCalculate, isLoading }) 
   });
   
   const [rawText, setRawText] = useState('');
+  const [calib, setCalib] = useState({ p1: '', x: '', p2: '' });
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
@@ -32,6 +34,25 @@ export const InputForm: React.FC<InputFormProps> = ({ onCalculate, isLoading }) 
       ...prev,
       [name]: name === 'betType' ? value : parseFloat(value) || 0,
     }));
+  };
+
+  const handleAutoCalibrate = () => {
+    const p1 = parseFloat(calib.p1);
+    const x = parseFloat(calib.x);
+    const p2 = parseFloat(calib.p2);
+    
+    if (p1 && x && p2) {
+      const { m1, m2 } = autoCalibrate(
+        formData.p1, formData.x, formData.p2,
+        p1, x, p2,
+        formData.minute, formData.score1, formData.score2
+      );
+      setFormData(prev => ({
+        ...prev,
+        intensity1: m1,
+        intensity2: m2
+      }));
+    }
   };
 
   const handleTextChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
@@ -168,6 +189,25 @@ export const InputForm: React.FC<InputFormProps> = ({ onCalculate, isLoading }) 
               </div>
             </div>
           </div>
+        </div>
+
+        {/* Авто-Калибровка */}
+        <div className="space-y-2 pt-3 border-t border-zinc-100">
+          <div className="flex items-center justify-between mb-1">
+            <h3 className="text-sm font-medium text-zinc-900">Авто-калибровка по текущей линии (1X2)</h3>
+          </div>
+          <div className="flex gap-2">
+            <input type="number" step="0.01" value={calib.p1} onChange={e => setCalib({...calib, p1: e.target.value})} placeholder="П1 (Live)" className="w-1/3 px-2 py-1.5 text-sm border border-zinc-300 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors" />
+            <input type="number" step="0.01" value={calib.x} onChange={e => setCalib({...calib, x: e.target.value})} placeholder="X (Live)" className="w-1/3 px-2 py-1.5 text-sm border border-zinc-300 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors" />
+            <input type="number" step="0.01" value={calib.p2} onChange={e => setCalib({...calib, p2: e.target.value})} placeholder="П2 (Live)" className="w-1/3 px-2 py-1.5 text-sm border border-zinc-300 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors" />
+          </div>
+          <button 
+            type="button" 
+            onClick={handleAutoCalibrate}
+            className="w-full bg-zinc-100 hover:bg-zinc-200 text-zinc-700 text-sm font-medium py-1.5 rounded-md transition-colors"
+          >
+            Подобрать идеальную активность
+          </button>
         </div>
       </div>
 
