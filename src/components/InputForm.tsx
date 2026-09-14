@@ -37,23 +37,37 @@ export const InputForm: React.FC<InputFormProps> = ({ onCalculate, isLoading }) 
   };
 
   const handleAutoCalibrate = () => {
-    const p1 = parseFloat(calib.p1);
-    const x = parseFloat(calib.x);
-    const p2 = parseFloat(calib.p2);
-    
-    if (p1 && x && p2) {
+    try {
+      const p1 = parseFloat(calib.p1.replace(',', '.'));
+      const x = parseFloat(calib.x.replace(',', '.'));
+      const p2 = parseFloat(calib.p2.replace(',', '.'));
+      
+      if (!p1 || !x || !p2 || isNaN(p1) || isNaN(x) || isNaN(p2)) {
+        alert("Пожалуйста, введите корректные коэффициенты для П1, Х и П2.");
+        return;
+      }
+      
       const { m1, m2 } = autoCalibrate(
         formData.p1, formData.x, formData.p2,
         p1, x, p2,
         formData.minute, formData.score1, formData.score2
       );
+      
       const newData = {
         ...formData,
         intensity1: m1,
         intensity2: m2
       };
+      
       setFormData(newData);
       onCalculate(newData);
+      
+      // visual feedback for the user to see it worked
+      alert(`Калибровка завершена!\nИдеальная активность: П1 = ${Math.round(m1*100)}%, П2 = ${Math.round(m2*100)}%`);
+      
+    } catch (err) {
+      console.error(err);
+      alert("Произошла ошибка при калибровке.");
     }
   };
 
@@ -199,9 +213,9 @@ export const InputForm: React.FC<InputFormProps> = ({ onCalculate, isLoading }) 
             <h3 className="text-sm font-medium text-zinc-900">Авто-калибровка по текущей линии (1X2)</h3>
           </div>
           <div className="flex gap-2">
-            <input type="number" step="0.01" value={calib.p1} onChange={e => setCalib({...calib, p1: e.target.value})} placeholder="П1 (Live)" className="w-1/3 px-2 py-1.5 text-sm border border-zinc-300 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors" />
-            <input type="number" step="0.01" value={calib.x} onChange={e => setCalib({...calib, x: e.target.value})} placeholder="X (Live)" className="w-1/3 px-2 py-1.5 text-sm border border-zinc-300 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors" />
-            <input type="number" step="0.01" value={calib.p2} onChange={e => setCalib({...calib, p2: e.target.value})} placeholder="П2 (Live)" className="w-1/3 px-2 py-1.5 text-sm border border-zinc-300 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors" />
+            <input type="text" inputMode="decimal" value={calib.p1} onChange={e => setCalib({...calib, p1: e.target.value})} placeholder="П1 (Live)" className="w-1/3 px-2 py-1.5 text-sm border border-zinc-300 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors" />
+            <input type="text" inputMode="decimal" value={calib.x} onChange={e => setCalib({...calib, x: e.target.value})} placeholder="X (Live)" className="w-1/3 px-2 py-1.5 text-sm border border-zinc-300 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors" />
+            <input type="text" inputMode="decimal" value={calib.p2} onChange={e => setCalib({...calib, p2: e.target.value})} placeholder="П2 (Live)" className="w-1/3 px-2 py-1.5 text-sm border border-zinc-300 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors" />
           </div>
           <button 
             type="button" 
