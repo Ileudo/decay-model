@@ -118,7 +118,7 @@ export default function App() {
             <InputForm onCalculate={handleCalculate} isLoading={isCalculating} />
           </div>
           <div className="lg:col-span-8">
-            <MinuteTable data={tableData} />
+            <MinuteTable data={tableData} currentMinute={inputData?.minute} />
           </div>
         </div>
       </main>
