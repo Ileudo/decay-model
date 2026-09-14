@@ -10,9 +10,11 @@ interface ResultsViewProps {
 export const ResultsView: React.FC<ResultsViewProps> = ({ preMatch, live }) => {
   if (!preMatch || !live) {
     return (
-      <div className="bg-white rounded-xl shadow-sm border border-zinc-200 p-8 text-center text-zinc-500 flex flex-col items-center justify-center h-full min-h-[200px]">
-        <AlertCircle className="w-10 h-10 mb-3 text-zinc-300" />
-        <p className="text-sm">Заполните форму и нажмите "Анализировать линию" для получения отчета.</p>
+      <div className="bg-white rounded-xl shadow-sm border border-zinc-200 p-6 flex flex-col sm:flex-row items-center justify-between text-zinc-500 min-h-[100px]">
+        <div className="flex items-center gap-3">
+          <AlertCircle className="w-6 h-6 text-indigo-400" />
+          <p className="text-sm font-medium text-zinc-700">Заполните форму ниже и нажмите "Анализировать линию", чтобы получить вердикт.</p>
+        </div>
       </div>
     );
   }
@@ -20,84 +22,59 @@ export const ResultsView: React.FC<ResultsViewProps> = ({ preMatch, live }) => {
   const isValue = live.verdict === 'VALUE';
 
   return (
-    <div className="space-y-4">
-      <div className="bg-white rounded-xl shadow-sm border border-zinc-200 overflow-hidden">
-        <div className="bg-zinc-50 px-4 py-3 border-b border-zinc-200">
-          <h3 className="font-semibold text-zinc-900 flex items-center gap-2 text-sm">
-            <span className="w-2 h-2 rounded-full bg-indigo-500"></span>
-            Прематчевый Расклад
-          </h3>
+    <div className="bg-white rounded-xl shadow-sm border border-zinc-200 overflow-hidden">
+      {/* Top Banner: Verdict */}
+      <div className={`px-5 py-4 border-b flex flex-col md:flex-row justify-between items-center gap-4 ${isValue ? 'bg-emerald-50 border-emerald-200' : 'bg-rose-50 border-rose-200'}`}>
+        <div className="flex items-center gap-3">
+          <div className={`p-2 rounded-full ${isValue ? 'bg-emerald-100 text-emerald-600' : 'bg-rose-100 text-rose-600'}`}>
+            {isValue ? <CheckCircle2 className="w-5 h-5" /> : <AlertCircle className="w-5 h-5" />}
+          </div>
+          <div>
+            <h2 className={`text-lg font-bold ${isValue ? 'text-emerald-900' : 'text-rose-900'}`}>
+              {isValue ? 'ВАЛУЙ (VALUE)' : 'ПЕРЕГРЕВ - ПРОПУСК'}
+            </h2>
+            <div className={`text-xs font-medium flex items-center gap-1 ${isValue ? 'text-emerald-700' : 'text-rose-700'}`}>
+              Индекс Перегрева:
+              <span className="font-bold ml-1 text-sm">{(live.iTimeDrop * 100).toFixed(2)}%</span>
+              {live.iTimeDrop > 0 ? <TrendingDown className="w-4 h-4 ml-0.5" /> : <TrendingUp className="w-4 h-4 ml-0.5" />}
+            </div>
+          </div>
         </div>
-        <div className="p-4 grid grid-cols-2 md:grid-cols-6 gap-3">
-          <div className="bg-zinc-50 p-3 rounded-lg">
-            <div className="text-[10px] text-zinc-500 uppercase font-semibold tracking-wider mb-1">Маржа ПМ</div>
-            <div className="text-lg font-bold text-zinc-900">{(preMatch.margin * 100).toFixed(2)}%</div>
+
+        <div className="flex gap-4">
+          <div className="text-right">
+            <div className={`text-[10px] uppercase font-bold tracking-wider mb-0.5 ${isValue ? 'text-emerald-600/70' : 'text-rose-600/70'}`}>Расчетная линия</div>
+            <div className={`text-2xl font-black ${isValue ? 'text-emerald-700' : 'text-rose-700'}`}>{live.kCalculated.toFixed(3)}</div>
           </div>
-          <div className="bg-zinc-50 p-3 rounded-lg">
-            <div className="text-[10px] text-zinc-500 uppercase font-semibold tracking-wider mb-1">True П1</div>
-            <div className="text-lg font-bold text-zinc-900">{(preMatch.trueP1 * 100).toFixed(1)}%</div>
-          </div>
-          <div className="bg-zinc-50 p-3 rounded-lg">
-            <div className="text-[10px] text-zinc-500 uppercase font-semibold tracking-wider mb-1">True X</div>
-            <div className="text-lg font-bold text-zinc-900">{(preMatch.trueX * 100).toFixed(1)}%</div>
-          </div>
-          <div className="bg-zinc-50 p-3 rounded-lg">
-            <div className="text-[10px] text-zinc-500 uppercase font-semibold tracking-wider mb-1">True П2</div>
-            <div className="text-lg font-bold text-zinc-900">{(preMatch.trueP2 * 100).toFixed(1)}%</div>
-          </div>
-          <div className="bg-zinc-50 p-3 rounded-lg border-l-2 border-indigo-200">
-            <div className="text-[10px] text-zinc-500 uppercase font-semibold tracking-wider mb-1">xG П1</div>
-            <div className="text-lg font-bold text-zinc-900">{preMatch.xG1.toFixed(2)}</div>
-          </div>
-          <div className="bg-zinc-50 p-3 rounded-lg border-r-2 border-indigo-200">
-            <div className="text-[10px] text-zinc-500 uppercase font-semibold tracking-wider mb-1">xG П2</div>
-            <div className="text-lg font-bold text-zinc-900">{preMatch.xG2.toFixed(2)}</div>
+          <div className="w-px bg-current opacity-20 my-2"></div>
+          <div className="text-right">
+            <div className={`text-[10px] uppercase font-bold tracking-wider mb-0.5 ${isValue ? 'text-emerald-600/70' : 'text-rose-600/70'}`}>Pinnacle (Live)</div>
+            <div className={`text-2xl font-black ${isValue ? 'text-emerald-900' : 'text-rose-900'}`}>{live.kLive.toFixed(3)}</div>
           </div>
         </div>
       </div>
 
-      <div className={`rounded-xl shadow-sm border overflow-hidden transition-colors ${isValue ? 'border-emerald-200' : 'border-rose-200'}`}>
-        <div className={`px-4 py-3 border-b flex justify-between items-center ${isValue ? 'bg-emerald-50 border-emerald-200' : 'bg-rose-50 border-rose-200'}`}>
-          <h3 className={`font-semibold flex items-center gap-2 text-sm ${isValue ? 'text-emerald-900' : 'text-rose-900'}`}>
-            {isValue ? <CheckCircle2 className="w-4 h-4" /> : <AlertCircle className="w-4 h-4" />}
-            Вердикт Модели
-          </h3>
-          <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider ${isValue ? 'bg-emerald-200 text-emerald-800' : 'bg-rose-200 text-rose-800'}`}>
-            {isValue ? 'ВАЛУЙ (VALUE)' : 'ПЕРЕГРЕВ - ПРОПУСК'}
-          </span>
+      {/* Bottom section: Core Metrics */}
+      <div className="p-3 grid grid-cols-2 md:grid-cols-5 gap-3 bg-zinc-50/50">
+        <div className="p-2.5 bg-white rounded-lg border border-zinc-100 shadow-sm">
+          <div className="text-[9px] text-zinc-500 uppercase font-semibold tracking-wider mb-0.5">Маржа ПМ</div>
+          <div className="text-base font-bold text-zinc-800">{(preMatch.margin * 100).toFixed(2)}%</div>
         </div>
-        <div className="bg-white p-4 grid grid-cols-2 lg:grid-cols-4 gap-3">
-          <div>
-            <div className="text-[10px] text-zinc-500 uppercase font-semibold tracking-wider mb-1 flex items-center gap-1" title="Remaining Expected Goals">
-              Остаток xG (П1 / П2)
-            </div>
-            <div className="text-lg font-medium text-zinc-900">{live.rem_xG1.toFixed(2)} <span className="text-zinc-400 text-sm font-normal">/</span> {live.rem_xG2.toFixed(2)}</div>
-            <div className="text-[10px] text-zinc-400 mt-0.5 font-medium">
-              Суммарный тотал: {(live.rem_xG1 + live.rem_xG2).toFixed(2)}
-            </div>
-          </div>
-          <div>
-            <div className="text-[10px] text-zinc-500 uppercase font-semibold tracking-wider mb-1">Расчетная линия</div>
-            <div className="text-lg font-bold text-indigo-600">
-              {live.kCalculated.toFixed(3)}
-            </div>
-            <div className="text-[10px] text-zinc-400 mt-0.5 font-medium">
-              Fair: {live.kFairTime.toFixed(3)}
-            </div>
-          </div>
-          <div>
-            <div className="text-[10px] text-zinc-500 uppercase font-semibold tracking-wider mb-1">Pinnacle (Live)</div>
-            <div className="text-lg font-bold text-zinc-900">{live.kLive.toFixed(3)}</div>
-          </div>
-          <div>
-            <div className="text-[10px] text-zinc-500 uppercase font-semibold tracking-wider mb-1 flex items-center gap-1">
-              Индекс Перегрева
-              {live.iTimeDrop > 0 ? <TrendingDown className="w-3 h-3 text-rose-500" /> : <TrendingUp className="w-3 h-3 text-emerald-500" />}
-            </div>
-            <div className={`text-lg font-bold ${live.iTimeDrop > 0 ? 'text-rose-600' : 'text-emerald-600'}`}>
-              {(live.iTimeDrop * 100).toFixed(2)}%
-            </div>
-          </div>
+        <div className="p-2.5 bg-white rounded-lg border border-zinc-100 shadow-sm">
+          <div className="text-[9px] text-zinc-500 uppercase font-semibold tracking-wider mb-0.5">Fair (Чистая Линия)</div>
+          <div className="text-base font-bold text-zinc-800">{live.kFairTime.toFixed(3)}</div>
+        </div>
+        <div className="p-2.5 bg-white rounded-lg border border-zinc-100 shadow-sm">
+          <div className="text-[9px] text-zinc-500 uppercase font-semibold tracking-wider mb-0.5">xG П1 (Прематч)</div>
+          <div className="text-base font-bold text-zinc-800">{preMatch.xG1.toFixed(2)}</div>
+        </div>
+        <div className="p-2.5 bg-white rounded-lg border border-zinc-100 shadow-sm">
+          <div className="text-[9px] text-zinc-500 uppercase font-semibold tracking-wider mb-0.5">xG П2 (Прематч)</div>
+          <div className="text-base font-bold text-zinc-800">{preMatch.xG2.toFixed(2)}</div>
+        </div>
+        <div className="p-2.5 bg-indigo-50 rounded-lg border border-indigo-100 shadow-sm">
+          <div className="text-[9px] text-indigo-500 uppercase font-semibold tracking-wider mb-0.5">Остаток xG (П1/П2)</div>
+          <div className="text-base font-bold text-indigo-900">{live.rem_xG1.toFixed(2)} <span className="text-indigo-400 font-normal">/</span> {live.rem_xG2.toFixed(2)}</div>
         </div>
       </div>
     </div>

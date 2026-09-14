@@ -14,9 +14,9 @@ export const MinuteTable: React.FC<MinuteTableProps> = ({ data }) => {
         <h3 className="font-semibold text-zinc-900">Динамика Линий (0:0)</h3>
         <p className="text-xs text-zinc-500 mt-1">Естественное усыхание с шагом 1 минута</p>
       </div>
-      <div className="overflow-x-auto max-h-[600px] overflow-y-auto">
+      <div className="overflow-x-auto h-[calc(100vh-200px)] overflow-y-auto relative">
         <table className="w-full text-sm text-left">
-          <thead className="text-xs text-zinc-500 uppercase bg-zinc-50 sticky top-0 border-b border-zinc-200 z-10">
+          <thead className="text-[11px] text-zinc-500 uppercase bg-zinc-50 sticky top-0 border-b border-zinc-200 z-10 shadow-sm">
             <tr>
               <th className="px-3 py-3 font-semibold text-center w-12">Мин</th>
               <th className="px-3 py-3 font-semibold text-right">П1</th>
