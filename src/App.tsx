@@ -98,17 +98,17 @@ export default function App() {
 
   return (
     <div className="min-h-screen bg-slate-50 text-slate-900 font-sans selection:bg-indigo-100 selection:text-indigo-900 pb-12">
-      <header className="bg-white border-b border-zinc-200 px-6 py-4 sticky top-0 z-20">
-        <div className="max-w-7xl mx-auto flex items-center gap-3">
-          <div className="bg-indigo-600 p-2 rounded-lg">
-            <Activity className="w-5 h-5 text-white" />
+      <header className="bg-white border-b border-zinc-200 px-4 py-2 sticky top-0 z-20">
+        <div className="max-w-7xl mx-auto flex items-center gap-2">
+          <div className="bg-indigo-600 p-1.5 rounded-lg">
+            <Activity className="w-4 h-4 text-white" />
           </div>
-          <h1 className="text-xl font-bold tracking-tight text-zinc-900">Live Odds Actuary</h1>
-          <span className="text-sm font-medium bg-zinc-100 text-zinc-600 px-2.5 py-0.5 rounded-full ml-2">Time-Decay Model</span>
+          <h1 className="text-lg font-bold tracking-tight text-zinc-900">Live Odds Actuary</h1>
+          <span className="text-[10px] font-medium bg-zinc-100 text-zinc-600 px-2 py-0.5 rounded-full ml-1 border border-zinc-200">Time-Decay Model</span>
         </div>
       </header>
 
-      <main className="max-w-7xl mx-auto px-4 lg:px-6 pt-4 pb-12 space-y-4">
+      <main className="max-w-7xl mx-auto px-4 lg:px-6 pt-3 pb-8 space-y-3">
         <ResultsView preMatch={preMatch} live={live} />
         
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 lg:gap-6">

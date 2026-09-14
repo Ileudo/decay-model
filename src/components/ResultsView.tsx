@@ -10,11 +10,9 @@ interface ResultsViewProps {
 export const ResultsView: React.FC<ResultsViewProps> = ({ preMatch, live }) => {
   if (!preMatch || !live) {
     return (
-      <div className="bg-white rounded-xl shadow-sm border border-zinc-200 p-6 flex flex-col sm:flex-row items-center justify-between text-zinc-500 min-h-[100px]">
-        <div className="flex items-center gap-3">
-          <AlertCircle className="w-6 h-6 text-indigo-400" />
-          <p className="text-sm font-medium text-zinc-700">Заполните форму ниже и нажмите "Анализировать линию", чтобы получить вердикт.</p>
-        </div>
+      <div className="bg-white rounded-lg shadow-sm border border-zinc-200 p-2.5 flex items-center gap-2.5 text-zinc-500">
+        <AlertCircle className="w-4 h-4 text-indigo-400" />
+        <p className="text-xs font-medium text-zinc-700">Вставьте сигнал или заполните форму, затем нажмите "Анализировать линию".</p>
       </div>
     );
   }
