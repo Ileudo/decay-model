@@ -1,11 +1,23 @@
-import React from 'react';
+import React, { useEffect, useRef } from 'react';
 import { MinuteRow } from '../types';
 
 interface MinuteTableProps {
   data: MinuteRow[];
+  currentMinute?: number;
 }
 
-export const MinuteTable: React.FC<MinuteTableProps> = ({ data }) => {
+export const MinuteTable: React.FC<MinuteTableProps> = ({ data, currentMinute }) => {
+  const activeRowRef = useRef<HTMLTableRowElement>(null);
+
+  useEffect(() => {
+    if (activeRowRef.current) {
+      activeRowRef.current.scrollIntoView({
+        behavior: 'smooth',
+        block: 'center',
+      });
+    }
+  }, [data, currentMinute]);
+
   if (!data || data.length === 0) return null;
 
   return (
@@ -31,18 +43,27 @@ export const MinuteTable: React.FC<MinuteTableProps> = ({ data }) => {
             </tr>
           </thead>
           <tbody className="divide-y divide-zinc-100">
-            {data.map((row) => (
-              <tr key={row.displayMinute} className="hover:bg-zinc-50 transition-colors">
-                <td className="px-3 py-2 font-medium text-zinc-900 text-center bg-zinc-50/50 whitespace-nowrap">{row.displayMinute}'</td>
-                <td className="px-3 py-2 text-right font-mono text-zinc-600">{row.p1.toFixed(3)}</td>
-                <td className="px-3 py-2 text-right font-mono text-zinc-600">{row.x.toFixed(3)}</td>
-                <td className="px-3 py-2 text-right font-mono text-zinc-600">{row.p2.toFixed(3)}</td>
-                <td className="px-3 py-2 text-right font-mono text-indigo-600">{row.ah1_0.toFixed(3)}</td>
-                <td className="px-3 py-2 text-right font-mono text-indigo-600">{row.ah2_0.toFixed(3)}</td>
-                <td className="px-3 py-2 text-right font-mono text-emerald-600">{row.ah2_025.toFixed(3)}</td>
-                <td className="px-3 py-2 text-right font-mono text-amber-600 font-medium border-l border-zinc-100 bg-amber-50/30">{row.totalXg.toFixed(3)}</td>
-              </tr>
-            ))}
+            {data.map((row) => {
+              const isActive = currentMinute !== undefined && row.displayMinute === String(currentMinute);
+              return (
+                <tr 
+                  key={row.displayMinute} 
+                  ref={isActive ? activeRowRef : null}
+                  className={`transition-colors ${isActive ? 'bg-indigo-50 border-y border-indigo-200 shadow-sm relative z-0' : 'hover:bg-zinc-50'}`}
+                >
+                  <td className={`px-3 py-2 font-medium text-center whitespace-nowrap ${isActive ? 'text-indigo-900 bg-indigo-100/50' : 'text-zinc-900 bg-zinc-50/50'}`}>
+                    {row.displayMinute}'
+                  </td>
+                  <td className={`px-3 py-2 text-right font-mono ${isActive ? 'text-indigo-900 font-bold' : 'text-zinc-600'}`}>{row.p1.toFixed(3)}</td>
+                  <td className={`px-3 py-2 text-right font-mono ${isActive ? 'text-indigo-900 font-bold' : 'text-zinc-600'}`}>{row.x.toFixed(3)}</td>
+                  <td className={`px-3 py-2 text-right font-mono ${isActive ? 'text-indigo-900 font-bold' : 'text-zinc-600'}`}>{row.p2.toFixed(3)}</td>
+                  <td className={`px-3 py-2 text-right font-mono ${isActive ? 'text-indigo-700 font-bold' : 'text-indigo-600'}`}>{row.ah1_0.toFixed(3)}</td>
+                  <td className={`px-3 py-2 text-right font-mono ${isActive ? 'text-indigo-700 font-bold' : 'text-indigo-600'}`}>{row.ah2_0.toFixed(3)}</td>
+                  <td className={`px-3 py-2 text-right font-mono ${isActive ? 'text-emerald-700 font-bold' : 'text-emerald-600'}`}>{row.ah2_025.toFixed(3)}</td>
+                  <td className={`px-3 py-2 text-right font-mono border-l ${isActive ? 'text-amber-700 bg-amber-100/50 border-amber-200 font-bold' : 'text-amber-600 bg-amber-50/30 border-zinc-100 font-medium'}`}>{row.totalXg.toFixed(3)}</td>
+                </tr>
+              );
+            })}
           </tbody>
         </table>
       </div>
