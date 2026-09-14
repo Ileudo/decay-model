@@ -216,35 +216,44 @@ export function calculateLiveOdds(
   };
 }
 
-export function autoCalibrate(
+export function autoCalibrateSingle(
   pmP1: number, pmX: number, pmP2: number,
-  liveP1: number, liveX: number, liveP2: number,
-  minute: number, score1: number, score2: number
+  score1: number, score2: number, minute: number,
+  betType: string, targetKLive: number
 ): { m1: number, m2: number } {
-  const pmMarginSum = (1 / pmP1) + (1 / pmX) + (1 / pmP2);
-  const pmTrueP1 = (1 / pmP1) / pmMarginSum;
-  const pmTrueP2 = (1 / pmP2) / pmMarginSum;
-  
-  const { xG1: baseXG1, xG2: baseXG2 } = findLambdas(pmTrueP1, pmTrueP2);
+  const pre = solvePreMatch(pmP1, pmX, pmP2);
+  const marginSum = pre.margin + 1;
   const period = minute <= 45 ? 1 : 2;
-  
-  const liveMarginSum = (1 / liveP1) + (1 / liveX) + (1 / liveP2);
-  const targetTrueP1 = (1 / liveP1) / liveMarginSum;
-  const targetTrueX = (1 / liveX) / liveMarginSum;
-  const targetTrueP2 = (1 / liveP2) / liveMarginSum;
   
   let bestErr = Infinity;
   let bestM1 = 1.0;
   let bestM2 = 1.0;
   
-  for (let m1 = 0.1; m1 <= 3.0; m1 += 0.1) {
-    for (let m2 = 0.1; m2 <= 3.0; m2 += 0.1) {
-      const live = calculateLiveOdds(baseXG1, baseXG2, score1, score2, minute, liveMarginSum, period, m1, m2);
+  // We want to find m1, m2 that makes kCalculated == targetKLive.
+  // There are infinitely many combinations, so we add a penalty for deviation from 1.0
+  // to find the most "natural" modifiers.
+  
+  for (let m1 = 0.3; m1 <= 2.5; m1 += 0.05) {
+    for (let m2 = 0.3; m2 <= 2.5; m2 += 0.05) {
+      const live = calculateLiveOdds(pre.xG1, pre.xG2, score1, score2, minute, marginSum, period, m1, m2);
       
-      const err = Math.abs(live.p1 - liveP1) + 
-                  Math.abs(live.x - liveX) + 
-                  Math.abs(live.p2 - liveP2);
-                  
+      let kCalc = 0;
+      switch(betType) {
+        case 'П1': kCalc = live.p1; break;
+        case 'X': kCalc = live.x; break;
+        case 'П2': kCalc = live.p2; break;
+        case 'Ф1(0)': kCalc = live.ah1_0; break;
+        case 'Ф2(0)': kCalc = live.ah2_0; break;
+        case 'Ф1(-0.25)': kCalc = live.ah1_025; break;
+        case 'Ф2(-0.25)': kCalc = live.ah2_025; break;
+        default: kCalc = live.p1;
+      }
+      
+      const diff = Math.abs(kCalc - targetKLive);
+      // Small penalty for moving away from 1.0, to prefer symmetric/smallest adjustments
+      const penalty = 0.01 * (Math.pow(m1 - 1, 2) + Math.pow(m2 - 1, 2));
+      const err = diff + penalty;
+      
       if (err < bestErr) {
         bestErr = err;
         bestM1 = m1;
@@ -257,14 +266,26 @@ export function autoCalibrate(
   const coarseM2 = bestM2;
   bestErr = Infinity;
   
-  for (let m1 = Math.max(0.1, coarseM1 - 0.1); m1 <= Math.min(3.0, coarseM1 + 0.1); m1 += 0.01) {
-    for (let m2 = Math.max(0.1, coarseM2 - 0.1); m2 <= Math.min(3.0, coarseM2 + 0.1); m2 += 0.01) {
-      const live = calculateLiveOdds(baseXG1, baseXG2, score1, score2, minute, liveMarginSum, period, m1, m2);
+  for (let m1 = Math.max(0.1, coarseM1 - 0.05); m1 <= Math.min(3.0, coarseM1 + 0.05); m1 += 0.005) {
+    for (let m2 = Math.max(0.1, coarseM2 - 0.05); m2 <= Math.min(3.0, coarseM2 + 0.05); m2 += 0.005) {
+      const live = calculateLiveOdds(pre.xG1, pre.xG2, score1, score2, minute, marginSum, period, m1, m2);
       
-      const err = Math.abs(live.p1 - liveP1) + 
-                  Math.abs(live.x - liveX) + 
-                  Math.abs(live.p2 - liveP2);
-                  
+      let kCalc = 0;
+      switch(betType) {
+        case 'П1': kCalc = live.p1; break;
+        case 'X': kCalc = live.x; break;
+        case 'П2': kCalc = live.p2; break;
+        case 'Ф1(0)': kCalc = live.ah1_0; break;
+        case 'Ф2(0)': kCalc = live.ah2_0; break;
+        case 'Ф1(-0.25)': kCalc = live.ah1_025; break;
+        case 'Ф2(-0.25)': kCalc = live.ah2_025; break;
+        default: kCalc = live.p1;
+      }
+      
+      const diff = Math.abs(kCalc - targetKLive);
+      const penalty = 0.01 * (Math.pow(m1 - 1, 2) + Math.pow(m2 - 1, 2));
+      const err = diff + penalty;
+      
       if (err < bestErr) {
         bestErr = err;
         bestM1 = m1;
@@ -274,7 +295,7 @@ export function autoCalibrate(
   }
   
   return {
-    m1: Math.max(0.5, Math.min(2.0, bestM1)),
-    m2: Math.max(0.5, Math.min(2.0, bestM2))
+    m1: Math.max(0.3, Math.min(2.5, bestM1)),
+    m2: Math.max(0.3, Math.min(2.5, bestM2))
   };
 }
