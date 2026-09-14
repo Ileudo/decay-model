@@ -24,31 +24,38 @@ export const ResultsView: React.FC<ResultsViewProps> = ({ preMatch, live, inputD
     <div className="bg-white rounded-xl shadow-sm border border-zinc-200 overflow-hidden">
       {/* Match Info Header */}
       {inputData.team1 && inputData.team2 && (
-        <div className="bg-[#0b1120] text-white px-5 py-4 flex flex-col items-center justify-center gap-2">
-           <div className="flex items-center gap-3 text-lg sm:text-xl font-bold">
-             <span className="cursor-pointer hover:text-indigo-300 transition-colors" onClick={() => navigator.clipboard.writeText(inputData.team1!)} title="Скопировать">{inputData.team1}</span>
-             <span className="text-slate-500 font-normal text-sm">vs</span>
-             <span className="cursor-pointer hover:text-indigo-300 transition-colors" onClick={() => navigator.clipboard.writeText(inputData.team2!)} title="Скопировать">{inputData.team2}</span>
-           </div>
-           
-           <div className="text-4xl font-black text-emerald-400 font-mono tracking-[0.2em] mb-1">
-             {inputData.score1} : {inputData.score2}
-           </div>
-           
-           <div className="flex items-center gap-2">
-             <div className="bg-slate-800 text-slate-300 text-sm font-mono px-2.5 py-0.5 rounded border border-slate-700">
-               {inputData.minute}:00
-             </div>
-             <div className="text-xs text-slate-400">
-               (Осталось {Math.max(0, 90 - inputData.minute)} мин)
-             </div>
-           </div>
-           
-           {inputData.league && (
-             <div className="text-[10px] text-slate-500 font-medium uppercase tracking-wider mt-2 cursor-pointer hover:text-slate-300 transition-colors" onClick={() => navigator.clipboard.writeText(inputData.league!)} title="Скопировать лигу">
-               {inputData.league}
-             </div>
-           )}
+        <div className="bg-white border-b border-zinc-200 px-5 py-3 flex flex-col md:flex-row items-center justify-between gap-3">
+          <div className="flex flex-col items-center md:items-start w-full md:w-auto">
+            {inputData.league && (
+              <div 
+                className="text-[10px] text-zinc-400 font-semibold uppercase tracking-wider cursor-pointer hover:text-indigo-500 transition-colors mb-1" 
+                onClick={() => navigator.clipboard.writeText(inputData.league!)} 
+                title="Скопировать лигу"
+              >
+                {inputData.league}
+              </div>
+            )}
+            <div className="flex items-center gap-3 text-zinc-800">
+              <span className="font-bold text-sm sm:text-base cursor-pointer hover:text-indigo-600 transition-colors" onClick={() => navigator.clipboard.writeText(inputData.team1!)} title="Скопировать">{inputData.team1}</span>
+              <div className="bg-zinc-100 px-3 py-0.5 rounded-md border border-zinc-200 shadow-sm flex items-center gap-2 font-mono font-bold text-base text-indigo-900">
+                <span>{inputData.score1}</span>
+                <span className="text-zinc-400 font-normal">:</span>
+                <span>{inputData.score2}</span>
+              </div>
+              <span className="font-bold text-sm sm:text-base cursor-pointer hover:text-indigo-600 transition-colors" onClick={() => navigator.clipboard.writeText(inputData.team2!)} title="Скопировать">{inputData.team2}</span>
+            </div>
+          </div>
+          
+          <div className="flex items-center gap-3 bg-zinc-50 px-4 py-2 rounded-lg border border-zinc-100 w-full md:w-auto justify-center md:justify-end">
+            <div className="flex items-center gap-1.5 text-zinc-700 font-mono text-sm font-bold">
+               <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+               {inputData.minute}'
+            </div>
+            <div className="w-px h-4 bg-zinc-300"></div>
+            <div className="text-[11px] text-zinc-500 font-medium whitespace-nowrap">
+              Осталось {Math.max(0, 90 - inputData.minute)} мин
+            </div>
+          </div>
         </div>
       )}
 
