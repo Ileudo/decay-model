@@ -48,7 +48,8 @@ export const InputForm: React.FC<InputFormProps> = ({ onCalculate, isLoading }) 
       const { m1, m2 } = autoCalibrate(
         formData.p1, formData.x, formData.p2,
         formData.liveP1, formData.liveX, formData.liveP2,
-        formData.score1, formData.score2, formData.minute
+        formData.score1, formData.score2, formData.minute,
+        formData.overOdds, formData.underOdds, formData.total
       );
       
       const newData = {

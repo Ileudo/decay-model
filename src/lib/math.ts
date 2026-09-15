@@ -321,9 +321,10 @@ export function calculateLiveOdds(
 export function autoCalibrate(
   pmP1: number, pmX: number, pmP2: number,
   liveP1: number, liveX: number, liveP2: number,
-  score1: number, score2: number, minute: number
+  score1: number, score2: number, minute: number,
+  overOdds?: number, underOdds?: number, totalLine?: number
 ): { m1: number, m2: number } {
-  const pre = solvePreMatch(pmP1, pmX, pmP2);
+  const pre = solvePreMatch(pmP1, pmX, pmP2, overOdds, underOdds, totalLine);
   const period = minute <= 45 ? 1 : 2;
   
   // Use the margin sum from the live odds to better match bookmaker behavior
