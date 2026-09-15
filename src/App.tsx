@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Activity } from 'lucide-react';
 import { InputForm } from './components/InputForm';
 import { ResultsView } from './components/ResultsView';
+import { MatchInfoHeader } from './components/MatchInfoHeader';
 import { MinuteTable } from './components/MinuteTable';
 import { MatchInput, PreMatchResult, LiveResult, MinuteRow } from './types';
 import { solvePreMatch, calculateLiveOdds } from './lib/math';
@@ -116,14 +117,15 @@ export default function App() {
         </div>
       </header>
 
-      <main className="max-w-7xl mx-auto px-4 lg:px-6 pt-2 pb-2 space-y-2">
-        <ResultsView preMatch={preMatch} live={live} inputData={inputData} />
+      <main className="max-w-7xl mx-auto px-4 lg:px-6 pt-2 pb-2 space-y-2 lg:space-y-3">
+        <MatchInfoHeader preMatch={preMatch} live={live} inputData={inputData} />
         
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-3 lg:gap-4">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-3 lg:gap-4 items-start">
           <div className="lg:col-span-4">
             <InputForm onCalculate={handleCalculate} isLoading={isCalculating} />
           </div>
-          <div className="lg:col-span-8">
+          <div className="lg:col-span-8 flex flex-col gap-3 lg:gap-4">
+            <ResultsView preMatch={preMatch} live={live} inputData={inputData} />
             <MinuteTable data={tableData} currentMinute={inputData?.minute} />
           </div>
         </div>
