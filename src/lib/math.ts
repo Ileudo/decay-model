@@ -7,13 +7,19 @@ export function poisson(k: number, lambda: number): number {
   return p;
 }
 
-export function calculateMatchOutcomes(lambda1: number, lambda2: number, score1 = 0, score2 = 0) {
+export function calculateMatchOutcomes(lambda1: number, lambda2: number, score1 = 0, score2 = 0, rho = 1.0) {
   let p1 = 0, px = 0, p2 = 0;
   const MAX_GOALS = 10; // sufficient for football
 
   for (let i = 0; i <= MAX_GOALS; i++) {
     for (let j = 0; j <= MAX_GOALS; j++) {
-      const prob = poisson(i, lambda1) * poisson(j, lambda2);
+      let prob = poisson(i, lambda1) * poisson(j, lambda2);
+      
+      // Inflate or deflate draws specifically (Dixon-Coles simplified approach)
+      if (i === j) {
+        prob *= rho;
+      }
+      
       const final1 = score1 + i;
       const final2 = score2 + j;
       if (final1 > final2) p1 += prob;
@@ -26,57 +32,54 @@ export function calculateMatchOutcomes(lambda1: number, lambda2: number, score1 
   return { p1: p1 / sum, x: px / sum, p2: p2 / sum };
 }
 
-export function findLambdas(targetP1: number, targetP2: number, targetTotalXg?: number) {
-  if (targetTotalXg) {
-    // If we have an exact target total expected goals, we constrain L1 + L2 = targetTotalXg
-    // We do a binary search to find the correct ratio of L1 to L2 that matches the P1/P2 ratio.
-    let lowL1 = 0.01;
-    let highL1 = targetTotalXg - 0.01;
-    
-    // Safety check to ensure we don't go out of bounds
-    if (highL1 <= lowL1) {
-       return { xG1: targetTotalXg / 2, xG2: targetTotalXg / 2 };
-    }
-
-    const targetRatio = targetP1 / targetP2;
-    
-    for (let iter = 0; iter < 40; iter++) {
-      const midL1 = (lowL1 + highL1) / 2;
-      const midL2 = targetTotalXg - midL1;
-      
-      const { p1, p2 } = calculateMatchOutcomes(midL1, midL2, 0, 0);
-      const currentRatio = p1 / p2;
-      
-      // If our current ratio of P1/P2 is lower than the target, we need more L1
-      if (currentRatio < targetRatio) {
-        lowL1 = midL1;
-      } else {
-        highL1 = midL1;
-      }
-    }
-    const finalL1 = (lowL1 + highL1) / 2;
-    return { xG1: finalL1, xG2: targetTotalXg - finalL1 };
-  } else {
-    // Fallback: gradient descent based exclusively on 1X2 market
-    let L1 = 1.2; 
-    let L2 = 1.2;
-    const lr = 3.0; 
+export function findLambdas(targetP1: number, targetX: number, targetP2: number, targetTotalXg?: number) {
+  // Use user-provided total xG, or default to 2.5 goals (standard football benchmark)
+  const L_total = targetTotalXg || 2.5; 
   
-    for (let iter = 0; iter < 200; iter++) {
-      const { p1, p2 } = calculateMatchOutcomes(L1, L2, 0, 0);
-      const err1 = targetP1 - p1;
-      const err2 = targetP2 - p2;
-      
-      L1 += err1 * lr;
-      L2 += err2 * lr;
-      
-      L1 = Math.max(0.01, L1);
-      L2 = Math.max(0.01, L2);
-      
-      if (Math.abs(err1) < 0.0001 && Math.abs(err2) < 0.0001) break;
-    }
-    return { xG1: L1, xG2: L2 };
+  let lowL1 = 0.01;
+  let highL1 = L_total - 0.01;
+  
+  if (highL1 <= lowL1) {
+     return { xG1: L_total / 2, xG2: L_total / 2, rho: 1.0 };
   }
+
+  const targetRatio = targetP1 / targetP2;
+  
+  let bestL1 = L_total / 2;
+  let p1_raw = 0, px_raw = 0, p2_raw = 0;
+
+  for (let iter = 0; iter < 40; iter++) {
+    const midL1 = (lowL1 + highL1) / 2;
+    const midL2 = L_total - midL1;
+    
+    // Calculate raw probabilities strictly without draw inflation (rho = 1.0)
+    const probs = calculateMatchOutcomes(midL1, midL2, 0, 0, 1.0);
+    p1_raw = probs.p1;
+    px_raw = probs.x;
+    p2_raw = probs.p2;
+    
+    const currentRatio = p1_raw / p2_raw;
+    
+    // Binary search to find L1 that perfectly matches targetP1/targetP2 ratio
+    if (currentRatio < targetRatio) {
+      lowL1 = midL1;
+    } else {
+      highL1 = midL1;
+    }
+    bestL1 = (lowL1 + highL1) / 2;
+  }
+  
+  const L1 = bestL1;
+  const L2 = L_total - L1;
+  
+  // Calculate exact inflation factor (rho) needed to match the bookmaker's Draw probability.
+  // This guarantees that P(X) = targetX, and since P1/P2 ratio is preserved, P1 and P2 also match perfectly.
+  let rho = 1.0;
+  if (px_raw > 0 && targetX < 1.0) {
+     rho = (targetX * (p1_raw + p2_raw)) / (px_raw * (1 - targetX));
+  }
+  
+  return { xG1: L1, xG2: L2, rho };
 }
 
 export function asianTotalUnderProb(lambda: number, line: number): number {
@@ -147,7 +150,7 @@ export function solvePreMatch(p1Odds: number, xOdds: number, p2Odds: number, ove
     targetTotalXg = findTotalLambda(totalLine, fairUnderProb);
   }
   
-  const { xG1, xG2 } = findLambdas(trueP1, trueP2, targetTotalXg);
+  const { xG1, xG2, rho } = findLambdas(trueP1, trueX, trueP2, targetTotalXg);
 
   return { 
     trueP1, 
@@ -155,7 +158,8 @@ export function solvePreMatch(p1Odds: number, xOdds: number, p2Odds: number, ove
     trueP2, 
     margin: marginSum - 1,
     xG1,
-    xG2
+    xG2,
+    rho
   };
 }
 
@@ -182,6 +186,7 @@ export function getShare(minute: number, period: 1 | 2 = minute <= 45 ? 1 : 2): 
 export function calculateLiveOdds(
   xG1: number, 
   xG2: number, 
+  rho: number,
   score1: number, 
   score2: number, 
   minute: number, 
@@ -262,10 +267,11 @@ export function calculateLiveOdds(
   rem_xG2 *= intensity2;
   
   // Match outcomes for the remainder of the match (0:0 virtual start) - used for live AH
-  const rem = calculateMatchOutcomes(rem_xG1, rem_xG2, 0, 0);
+  // We use the same pre-match calibrated 'rho' to ensure consistency
+  const rem = calculateMatchOutcomes(rem_xG1, rem_xG2, 0, 0, rho);
   
   // Match outcomes for the full match considering current score - used for 1X2
-  const full = calculateMatchOutcomes(rem_xG1, rem_xG2, score1, score2);
+  const full = calculateMatchOutcomes(rem_xG1, rem_xG2, score1, score2, rho);
   
   const liveP1 = full.p1;
   const livePX = full.x;
@@ -351,7 +357,7 @@ export function autoCalibrate(
   
   for (let m1 = 0.1; m1 <= 3.0; m1 += 0.1) {
     for (let m2 = 0.1; m2 <= 3.0; m2 += 0.1) {
-      const live = calculateLiveOdds(pre.xG1, pre.xG2, score1, score2, minute, liveMarginSum, period, m1, m2);
+      const live = calculateLiveOdds(pre.xG1, pre.xG2, pre.rho, score1, score2, minute, liveMarginSum, period, m1, m2);
       
       const err = Math.abs(live.p1 - liveP1) + 
                   Math.abs(live.x - liveX) + 
@@ -371,7 +377,7 @@ export function autoCalibrate(
   
   for (let m1 = Math.max(0.1, coarseM1 - 0.1); m1 <= Math.min(3.0, coarseM1 + 0.1); m1 += 0.01) {
     for (let m2 = Math.max(0.1, coarseM2 - 0.1); m2 <= Math.min(3.0, coarseM2 + 0.1); m2 += 0.01) {
-      const live = calculateLiveOdds(pre.xG1, pre.xG2, score1, score2, minute, liveMarginSum, period, m1, m2);
+      const live = calculateLiveOdds(pre.xG1, pre.xG2, pre.rho, score1, score2, minute, liveMarginSum, period, m1, m2);
       
       const err = Math.abs(live.p1 - liveP1) + 
                   Math.abs(live.x - liveX) + 

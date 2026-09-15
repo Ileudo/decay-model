@@ -1,4 +1,4 @@
-export type BetType = 'П1' | 'X' | 'П2' | 'Ф1(0)' | 'Ф2(0)' | 'Ф1(-0.25)' | 'Ф2(-0.25)';
+export type BetType = 'П1' | 'X' | 'П2' | 'Ф1(0)' | 'Ф2(0)' | 'Ф1(-0.25)' | 'Ф2(-0.25)' | 'Ф1(-0.5)' | 'Ф2(-0.5)';
 
 export interface MatchInput {
   p1: number;
@@ -26,6 +26,7 @@ export interface PreMatchResult {
   trueP2: number;
   xG1: number;
   xG2: number;
+  rho: number;
 }
 
 export interface LiveResult {

@@ -30,7 +30,7 @@ export default function App() {
           liveMarginSum = (1 / input.liveP1) + (1 / input.liveX) + (1 / input.liveP2);
         }
         
-        const liveOdds = calculateLiveOdds(pre.xG1, pre.xG2, input.score1, input.score2, input.minute, liveMarginSum, input.minute <= 45 ? 1 : 2, input.intensity1, input.intensity2);
+        const liveOdds = calculateLiveOdds(pre.xG1, pre.xG2, pre.rho, input.score1, input.score2, input.minute, liveMarginSum, input.minute <= 45 ? 1 : 2, input.intensity1, input.intensity2);
         
         // Map selected bet type to the calculated fair odds and calculated odds with margin
         let kFairTime = 0;
@@ -67,7 +67,7 @@ export default function App() {
         const table: MinuteRow[] = [];
         
         const addRow = (display: string, m: number, period: 1 | 2) => {
-          const rowOdds = calculateLiveOdds(pre.xG1, pre.xG2, input.score1, input.score2, m, liveMarginSum, period, input.intensity1, input.intensity2);
+          const rowOdds = calculateLiveOdds(pre.xG1, pre.xG2, pre.rho, input.score1, input.score2, m, liveMarginSum, period, input.intensity1, input.intensity2);
           table.push({
             displayMinute: display,
             p1: rowOdds.p1,
