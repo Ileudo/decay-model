@@ -165,13 +165,15 @@ export const InputForm: React.FC<InputFormProps> = ({ onCalculate, isLoading }) 
           <div className="col-span-2">
             <label className="block text-[10px] text-zinc-500 mb-0.5 truncate" title="Ставка">Ставка</label>
             <select name="betType" value={formData.betType} onChange={handleChange} className="w-full px-1 py-1.5 text-xs border border-zinc-300 rounded focus:ring-1 focus:ring-indigo-500 bg-white min-w-0" required>
-              <option value="П1">П1</option>
-              <option value="X">X</option>
-              <option value="П2">П2</option>
+              <option value="П1">П1 (Исход)</option>
+              <option value="X">X (Ничья)</option>
+              <option value="П2">П2 (Исход)</option>
               <option value="Ф1(0)">Ф1(0)</option>
               <option value="Ф2(0)">Ф2(0)</option>
               <option value="Ф1(-0.25)">Ф1(-0.25)</option>
               <option value="Ф2(-0.25)">Ф2(-0.25)</option>
+              <option value="Ф1(-0.5)">Ф1(-0.5) Live</option>
+              <option value="Ф2(-0.5)">Ф2(-0.5) Live</option>
             </select>
           </div>
           <div className="col-span-2">

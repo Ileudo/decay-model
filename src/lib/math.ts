@@ -289,9 +289,15 @@ export function calculateLiveOdds(
   const trueAH1_0 = rem.p1 / (rem.p1 + rem.p2);
   const trueAH2_0 = rem.p2 / (rem.p1 + rem.p2);
 
+  // Ф1(-0.5) live is won if Team 1 scores MORE goals in the remainder of the match
+  const trueAH1_05 = rem.p1;
+  const trueAH2_05 = rem.p2;
+
   // Apply margin 
   const ah1_0 = clamp(1 / (trueAH1_0 * ahMarginSum));
   const ah2_0 = clamp(1 / (trueAH2_0 * ahMarginSum));
+  const ah1_05 = clamp(1 / (trueAH1_05 * ahMarginSum));
+  const ah2_05 = clamp(1 / (trueAH2_05 * ahMarginSum));
   
   // Ф1(-0.25)
   // Half stake on -0.5 (win if remP1), half stake on 0 (win if remP1, return if remX)
@@ -311,14 +317,17 @@ export function calculateLiveOdds(
   const ah1_0Fair = clampFair((rem.p1 + rem.p2) / rem.p1);
   const ah2_0Fair = clampFair((rem.p1 + rem.p2) / rem.p2);
   
+  const ah1_05Fair = clampFair(1 / rem.p1);
+  const ah2_05Fair = clampFair(1 / rem.p2);
+
   const ah1_025Fair = clampFair((1 - 0.5 * rem.x) / rem.p1);
   const ah2_025Fair = clampFair((1 - 0.5 * rem.x) / rem.p2);
   
   return {
     p1, x, p2,
-    ah1_0, ah2_0, ah1_025, ah2_025,
+    ah1_0, ah2_0, ah1_025, ah2_025, ah1_05, ah2_05,
     p1Fair, xFair, p2Fair,
-    ah1_0Fair, ah2_0Fair, ah1_025Fair, ah2_025Fair,
+    ah1_0Fair, ah2_0Fair, ah1_025Fair, ah2_025Fair, ah1_05Fair, ah2_05Fair,
     decayFactor,
     rem_xG1, rem_xG2
   };

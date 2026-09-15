@@ -25,8 +25,12 @@ export default function App() {
         setPreMatch(pre);
         
         // 2. Calculate live odds for current minute using hybrid model
-        const marginSum = pre.margin + 1;
-        const liveOdds = calculateLiveOdds(pre.xG1, pre.xG2, input.score1, input.score2, input.minute, marginSum, input.minute <= 45 ? 1 : 2, input.intensity1, input.intensity2);
+        let liveMarginSum = pre.margin + 1 + 0.025; // Standard heuristic: live margin is ~2.5% higher
+        if (input.liveP1 && input.liveX && input.liveP2) {
+          liveMarginSum = (1 / input.liveP1) + (1 / input.liveX) + (1 / input.liveP2);
+        }
+        
+        const liveOdds = calculateLiveOdds(pre.xG1, pre.xG2, input.score1, input.score2, input.minute, liveMarginSum, input.minute <= 45 ? 1 : 2, input.intensity1, input.intensity2);
         
         // Map selected bet type to the calculated fair odds and calculated odds with margin
         let kFairTime = 0;
@@ -40,6 +44,8 @@ export default function App() {
           case 'Ф2(0)': kCalculated = liveOdds.ah2_0; kFairTime = liveOdds.ah2_0Fair; break;
           case 'Ф1(-0.25)': kCalculated = liveOdds.ah1_025; kFairTime = liveOdds.ah1_025Fair; break;
           case 'Ф2(-0.25)': kCalculated = liveOdds.ah2_025; kFairTime = liveOdds.ah2_025Fair; break;
+          case 'Ф1(-0.5)': kCalculated = liveOdds.ah1_05; kFairTime = liveOdds.ah1_05Fair; break;
+          case 'Ф2(-0.5)': kCalculated = liveOdds.ah2_05; kFairTime = liveOdds.ah2_05Fair; break;
         }
         
         // I_time_drop is calculated using the modeled bookmaker line (with margin) vs Pinnacle odds
@@ -61,7 +67,7 @@ export default function App() {
         const table: MinuteRow[] = [];
         
         const addRow = (display: string, m: number, period: 1 | 2) => {
-          const rowOdds = calculateLiveOdds(pre.xG1, pre.xG2, input.score1, input.score2, m, marginSum, period, input.intensity1, input.intensity2);
+          const rowOdds = calculateLiveOdds(pre.xG1, pre.xG2, input.score1, input.score2, m, liveMarginSum, period, input.intensity1, input.intensity2);
           table.push({
             displayMinute: display,
             p1: rowOdds.p1,
