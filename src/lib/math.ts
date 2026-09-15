@@ -91,19 +91,25 @@ export function asianTotalUnderProb(lambda: number, line: number): number {
   
   const pdf = (k: number) => poisson(k, lambda);
 
+  // Implied probabilities derived exactly from Expected Value = 0 (fair odds)
   if (frac === 0.5) {
+    // e.g. 2.5. Win = <=2. Lose = >=3.
     return cdf(base);
   } else if (frac === 0) {
-    // Win prob + 0.5 * Push prob
-    return cdf(base - 1) + 0.5 * pdf(base);
+    // e.g. 2.0. Win = <=1. Push = 2.
+    const pWin = cdf(base - 1);
+    const pPush = pdf(base);
+    return pWin / (1 - pPush);
   } else if (frac === 0.25) {
-    const p20 = cdf(base - 1) + 0.5 * pdf(base); 
-    const p25 = cdf(base); 
-    return 0.5 * p20 + 0.5 * p25;
+    // e.g. 2.25. Half-win = 2. Win = <=1.
+    const pWin = cdf(base - 1);
+    const pHalfWin = pdf(base);
+    return (pWin + 0.5 * pHalfWin) / (1 - 0.5 * pHalfWin);
   } else if (frac === 0.75) {
-    const p25 = cdf(base); 
-    const p30 = cdf(base) + 0.5 * pdf(base + 1); 
-    return 0.5 * p25 + 0.5 * p30;
+    // e.g. 2.75. Half-lose = 3. Win = <=2.
+    const pWin = cdf(base);
+    const pHalfLose = pdf(base + 1);
+    return pWin / (1 - 0.5 * pHalfLose);
   }
   return cdf(base);
 }
