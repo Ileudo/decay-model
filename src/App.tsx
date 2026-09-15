@@ -21,7 +21,7 @@ export default function App() {
     setTimeout(() => {
       try {
         // 1. Calculate pre-match margin and true probabilities
-        const pre = solvePreMatch(input.p1, input.x, input.p2);
+        const pre = solvePreMatch(input.p1, input.x, input.p2, input.overOdds, input.underOdds, input.total);
         setPreMatch(pre);
         
         // 2. Calculate live odds for current minute using hybrid model

@@ -26,35 +26,122 @@ export function calculateMatchOutcomes(lambda1: number, lambda2: number, score1 
   return { p1: p1 / sum, x: px / sum, p2: p2 / sum };
 }
 
-export function findLambdas(targetP1: number, targetP2: number) {
-  let L1 = 1.2; // Initial guess
-  let L2 = 1.2;
-  const lr = 3.0; // Learning rate for gradient descent
+export function findLambdas(targetP1: number, targetP2: number, targetTotalXg?: number) {
+  if (targetTotalXg) {
+    // If we have an exact target total expected goals, we constrain L1 + L2 = targetTotalXg
+    // We do a binary search to find the correct ratio of L1 to L2 that matches the P1/P2 ratio.
+    let lowL1 = 0.01;
+    let highL1 = targetTotalXg - 0.01;
+    
+    // Safety check to ensure we don't go out of bounds
+    if (highL1 <= lowL1) {
+       return { xG1: targetTotalXg / 2, xG2: targetTotalXg / 2 };
+    }
 
-  for (let iter = 0; iter < 200; iter++) {
-    const { p1, p2 } = calculateMatchOutcomes(L1, L2, 0, 0);
-    const err1 = targetP1 - p1;
-    const err2 = targetP2 - p2;
+    const targetRatio = targetP1 / targetP2;
     
-    L1 += err1 * lr;
-    L2 += err2 * lr;
-    
-    // Prevent negative xG
-    L1 = Math.max(0.01, L1);
-    L2 = Math.max(0.01, L2);
-    
-    if (Math.abs(err1) < 0.0001 && Math.abs(err2) < 0.0001) break;
+    for (let iter = 0; iter < 40; iter++) {
+      const midL1 = (lowL1 + highL1) / 2;
+      const midL2 = targetTotalXg - midL1;
+      
+      const { p1, p2 } = calculateMatchOutcomes(midL1, midL2, 0, 0);
+      const currentRatio = p1 / p2;
+      
+      // If our current ratio of P1/P2 is lower than the target, we need more L1
+      if (currentRatio < targetRatio) {
+        lowL1 = midL1;
+      } else {
+        highL1 = midL1;
+      }
+    }
+    const finalL1 = (lowL1 + highL1) / 2;
+    return { xG1: finalL1, xG2: targetTotalXg - finalL1 };
+  } else {
+    // Fallback: gradient descent based exclusively on 1X2 market
+    let L1 = 1.2; 
+    let L2 = 1.2;
+    const lr = 3.0; 
+  
+    for (let iter = 0; iter < 200; iter++) {
+      const { p1, p2 } = calculateMatchOutcomes(L1, L2, 0, 0);
+      const err1 = targetP1 - p1;
+      const err2 = targetP2 - p2;
+      
+      L1 += err1 * lr;
+      L2 += err2 * lr;
+      
+      L1 = Math.max(0.01, L1);
+      L2 = Math.max(0.01, L2);
+      
+      if (Math.abs(err1) < 0.0001 && Math.abs(err2) < 0.0001) break;
+    }
+    return { xG1: L1, xG2: L2 };
   }
-  return { xG1: L1, xG2: L2 };
 }
 
-export function solvePreMatch(p1Odds: number, xOdds: number, p2Odds: number) {
+export function asianTotalUnderProb(lambda: number, line: number): number {
+  const base = Math.floor(line);
+  const frac = line - base;
+
+  const cdf = (k: number) => {
+    let sum = 0;
+    for (let i = 0; i <= k; i++) sum += poisson(i, lambda);
+    return sum;
+  };
+  
+  const pdf = (k: number) => poisson(k, lambda);
+
+  if (frac === 0.5) {
+    return cdf(base);
+  } else if (frac === 0) {
+    // Win prob + 0.5 * Push prob
+    return cdf(base - 1) + 0.5 * pdf(base);
+  } else if (frac === 0.25) {
+    const p20 = cdf(base - 1) + 0.5 * pdf(base); 
+    const p25 = cdf(base); 
+    return 0.5 * p20 + 0.5 * p25;
+  } else if (frac === 0.75) {
+    const p25 = cdf(base); 
+    const p30 = cdf(base) + 0.5 * pdf(base + 1); 
+    return 0.5 * p25 + 0.5 * p30;
+  }
+  return cdf(base);
+}
+
+export function findTotalLambda(totalLine: number, targetUnderProb: number): number {
+  let low = 0.1;
+  let high = 10.0;
+  
+  for (let i = 0; i < 30; i++) {
+    const mid = (low + high) / 2;
+    const prob = asianTotalUnderProb(mid, totalLine);
+    
+    // Higher lambda = lower under probability
+    if (prob > targetUnderProb) {
+       low = mid; 
+    } else {
+       high = mid;
+    }
+  }
+  return (low + high) / 2;
+}
+
+export function solvePreMatch(p1Odds: number, xOdds: number, p2Odds: number, overOdds?: number, underOdds?: number, totalLine?: number) {
   const marginSum = (1 / p1Odds) + (1 / xOdds) + (1 / p2Odds);
   const trueP1 = (1 / p1Odds) / marginSum;
   const trueX = (1 / xOdds) / marginSum;
   const trueP2 = (1 / p2Odds) / marginSum;
   
-  const { xG1, xG2 } = findLambdas(trueP1, trueP2);
+  let targetTotalXg = undefined;
+  
+  // Extract total xG if over/under market data is available
+  if (overOdds && underOdds && totalLine && overOdds > 1 && underOdds > 1) {
+    const totalMargin = (1 / overOdds) + (1 / underOdds);
+    const fairUnderProb = (1 / underOdds) / totalMargin;
+    targetTotalXg = findTotalLambda(totalLine, fairUnderProb);
+  }
+  
+  const { xG1, xG2 } = findLambdas(trueP1, trueP2, targetTotalXg);
 
   return { 
     trueP1, 
@@ -188,10 +275,8 @@ export function calculateLiveOdds(
   // Asian Handicap Margin
   // Handicap margins are typically lower than 1X2 margins. 
   // We approximate the handicap margin based on the 1X2 margin.
-  // A standard 1X2 margin is ~4-6% (marginSum = 1.04 to 1.06).
-  // A standard Asian Handicap margin is ~2-3%.
-  // We apply a reasonable AH margin, e.g., 50% of the 1X2 margin.
-  const ahMarginSum = 1 + ((marginSum - 1) * 0.5);
+  // Empirical data from Pinnacle shows the AH margin is usually ~80% of the 1X2 margin.
+  const ahMarginSum = 1 + ((marginSum - 1) * 0.8);
 
   // Live Asian Handicaps are evaluated on the REMAINDER of the match
   // Ф1(0) is won if remP1, lost if remP2, returned if remX

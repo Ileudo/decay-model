@@ -5,6 +5,7 @@ export interface MatchInput {
   x: number;
   p2: number;
   total: number;
+  overOdds: number;
   underOdds: number;
   minute: number;
   score1: number;

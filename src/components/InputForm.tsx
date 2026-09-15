@@ -15,6 +15,7 @@ export const InputForm: React.FC<InputFormProps> = ({ onCalculate, isLoading }) 
     x: 3.81,
     p2: 3.13,
     total: 3.0,
+    overOdds: 1.86,
     underOdds: 1.86,
     minute: 20,
     score1: 0,
@@ -113,7 +114,7 @@ export const InputForm: React.FC<InputFormProps> = ({ onCalculate, isLoading }) 
           Прематч и Тотал
           <div className="flex-1 border-b border-zinc-100 ml-2"></div>
         </div>
-        <div className="grid grid-cols-5 gap-1">
+        <div className="grid grid-cols-6 gap-1">
           <div>
             <label className="block text-[8px] text-zinc-500 mb-0.5">П1 (Home)</label>
             <input type="number" step="0.01" name="p1" value={formData.p1} onChange={handleChange} className="w-full px-1 py-1 text-[10px] border border-zinc-300 rounded focus:ring-1 focus:ring-indigo-500" required />
@@ -129,6 +130,10 @@ export const InputForm: React.FC<InputFormProps> = ({ onCalculate, isLoading }) 
           <div>
             <label className="block text-[8px] text-zinc-500 mb-0.5">Тотал</label>
             <input type="number" step="0.25" name="total" value={formData.total} onChange={handleChange} className="w-full px-1 py-1 text-[10px] border border-zinc-300 rounded focus:ring-1 focus:ring-indigo-500" required />
+          </div>
+          <div>
+            <label className="block text-[8px] text-zinc-500 mb-0.5">Кэф ТБ</label>
+            <input type="number" step="0.01" name="overOdds" value={formData.overOdds || ''} onChange={handleChange} className="w-full px-1 py-1 text-[10px] border border-zinc-300 rounded focus:ring-1 focus:ring-indigo-500" />
           </div>
           <div>
             <label className="block text-[8px] text-zinc-500 mb-0.5">Кэф ТМ</label>

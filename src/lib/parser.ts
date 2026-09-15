@@ -73,10 +73,18 @@ export function parseRawText(text: string): Partial<MatchInput> {
   }
 
   // Totals
-  const totalMatch = text.match(/ТМ\(([\d.]+)\)=([\d.]+)/i);
-  if (totalMatch) {
-    result.total = parseFloat(totalMatch[1]);
-    result.underOdds = parseFloat(totalMatch[2]);
+  const totalBothMatch = text.match(/ТБ\(([\d.]+)\)=([\d.]+),\s*ТМ\(([\d.]+)\)=([\d.]+)/i);
+  if (totalBothMatch) {
+    result.total = parseFloat(totalBothMatch[1]);
+    result.overOdds = parseFloat(totalBothMatch[2]);
+    result.underOdds = parseFloat(totalBothMatch[4]);
+  } else {
+    // Fallback if only one is present
+    const totalMatch = text.match(/ТМ\(([\d.]+)\)=([\d.]+)/i);
+    if (totalMatch) {
+      result.total = parseFloat(totalMatch[1]);
+      result.underOdds = parseFloat(totalMatch[2]);
+    }
   }
 
   // Bet Type
