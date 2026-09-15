@@ -185,14 +185,31 @@ export function calculateLiveOdds(
   const x = clamp(1 / (livePX * marginSum));
   const p2 = clamp(1 / (liveP2 * marginSum));
   
+  // Asian Handicap Margin
+  // Handicap margins are typically lower than 1X2 margins. 
+  // We approximate the handicap margin based on the 1X2 margin.
+  // A standard 1X2 margin is ~4-6% (marginSum = 1.04 to 1.06).
+  // A standard Asian Handicap margin is ~2-3%.
+  // We apply a reasonable AH margin, e.g., 50% of the 1X2 margin.
+  const ahMarginSum = 1 + ((marginSum - 1) * 0.5);
+
   // Live Asian Handicaps are evaluated on the REMAINDER of the match
   // Ф1(0) is won if remP1, lost if remP2, returned if remX
-  const ah1_0 = clamp(1 / ((rem.p1 / (rem.p1 + rem.p2)) * marginSum));
-  const ah2_0 = clamp(1 / ((rem.p2 / (rem.p1 + rem.p2)) * marginSum));
+  const trueAH1_0 = rem.p1 / (rem.p1 + rem.p2);
+  const trueAH2_0 = rem.p2 / (rem.p1 + rem.p2);
+
+  // Apply margin 
+  const ah1_0 = clamp(1 / (trueAH1_0 * ahMarginSum));
+  const ah2_0 = clamp(1 / (trueAH2_0 * ahMarginSum));
   
   // Ф1(-0.25)
-  const ah1_025 = clamp(1 / ((rem.p1 / (1 - 0.5 * rem.x)) * marginSum));
-  const ah2_025 = clamp(1 / ((rem.p2 / (1 - 0.5 * rem.x)) * marginSum));
+  // Half stake on -0.5 (win if remP1), half stake on 0 (win if remP1, return if remX)
+  // Equivalently, win = rem.p1, half-loss = rem.x, loss = rem.p2
+  const trueAH1_025 = rem.p1 / (1 - 0.5 * rem.x);
+  const trueAH2_025 = rem.p2 / (1 - 0.5 * rem.x);
+
+  const ah1_025 = clamp(1 / (trueAH1_025 * ahMarginSum));
+  const ah2_025 = clamp(1 / (trueAH2_025 * ahMarginSum));
   
   // Fair Odds calculations (Algebraic direct)
   const clampFair = (val: number) => Math.max(1.00, val);
