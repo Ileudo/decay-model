@@ -212,53 +212,37 @@ export function calculateLiveOdds(
   const goalDifference = score1 - score2;
   
   if (goalDifference !== 0) {
-    const strengthRatio = Math.max(0.5, Math.min(3.0, xG1 / xG2)); // Clamp ratio to avoid extremes
+    const absDiff = Math.abs(goalDifference);
+    const winXG = goalDifference > 0 ? xG1 : xG2;
+    const losXG = goalDifference > 0 ? xG2 : xG1;
+    const winStrength = Math.max(0.5, Math.min(2.0, winXG / losXG));
     
-    // Base formula derived from empirical regression:
-    // M1 (Losing team) increases as they are stronger, but decreases as they are weaker.
-    let mLosing = 1.40 - (0.26 * strengthRatio);
+    // Winning team drops output as they protect the lead
+    let mWinning = 0.60 - (absDiff - 1) * 0.15;
+    if (winStrength < 1.0) mWinning -= 0.20; // Underdog winning parks the bus harder
     
-    // M2 (Winning team) depends on if they are the favorite or the underdog.
-    let mWinning = 1.0;
-    if (strengthRatio > 1.0) {
-      // Losing team is favorite -> Winning team is underdog (parks the bus)
-      mWinning = 1.0 - (0.17 * strengthRatio);
-    } else {
-      // Losing team is underdog -> Winning team is favorite (controls the game, doesn't panic)
-      mWinning = 0.80 + (0.20 * strengthRatio);
-    }
+    // Losing team pushes slightly harder to chase the game
+    let mLosing = 1.00 + (absDiff - 1) * 0.05;
+    if (winStrength < 1.0) mLosing += 0.10; // Favorite losing pushes harder
     
-    // Second half escalation ("Panic" and "Desperation")
+    // Intensify effects in the second half
     if (minute > 45) {
-      const t2 = (minute - 45) / 45.0; // 0.0 to 1.0 in second half
-      mLosing += (t2 * 0.50); 
-      mWinning += (t2 * 0.25); 
+      const t2 = (minute - 45) / 45.0; // 0.0 to 1.0
+      mWinning -= t2 * 0.25;
+      mLosing += t2 * 0.15;
     }
+
+    // Ensure we don't drop into negative multipliers
+    mLosing = Math.max(0.1, mLosing);
+    mWinning = Math.max(0.1, mWinning);
     
     // Apply modifiers based on who is winning/losing
     if (goalDifference < 0) { // Team 1 is losing
       rem_xG1 *= mLosing; 
       rem_xG2 *= mWinning; 
     } else { // Team 1 is winning
-      // If team 1 is winning, the "strength ratio" from the perspective of the losing team (Team 2) is inverted.
-      const invRatio = Math.max(0.5, Math.min(3.0, xG2 / xG1));
-      let mLosingInv = 1.40 - (0.26 * invRatio);
-      
-      let mWinningInv = 1.0;
-      if (invRatio > 1.0) {
-        mWinningInv = 1.0 - (0.17 * invRatio);
-      } else {
-        mWinningInv = 0.80 + (0.20 * invRatio);
-      }
-      
-      if (minute > 45) {
-        const t2 = (minute - 45) / 45.0; // 0.0 to 1.0 in second half
-        mLosingInv += (t2 * 0.50); 
-        mWinningInv += (t2 * 0.25); 
-      }
-      
-      rem_xG1 *= mWinningInv; 
-      rem_xG2 *= mLosingInv; 
+      rem_xG1 *= mWinning; 
+      rem_xG2 *= mLosing; 
     }
   }
 
