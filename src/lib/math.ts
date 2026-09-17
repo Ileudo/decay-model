@@ -198,9 +198,13 @@ export function calculateLiveOdds(
   const share = getShare(minute, period);
   const decayFactor = share;
   
-  // Base Remaining expected goals
-  let rem_xG1 = xG1 * decayFactor;
-  let rem_xG2 = xG2 * decayFactor;
+  // Base Remaining expected goals (Raw) - used for sticky markets like AH
+  const raw_rem_xG1 = xG1 * decayFactor;
+  const raw_rem_xG2 = xG2 * decayFactor;
+
+  // Modifiable xG used for dynamic 1X2 calibration
+  let rem_xG1 = raw_rem_xG1;
+  let rem_xG2 = raw_rem_xG2;
 
   // Game State (Score) Modifier:
   // Dynamic calibration based on Pinnacle data (0:1 scenario, 11v11).
@@ -246,15 +250,16 @@ export function calculateLiveOdds(
     }
   }
 
-  // Apply user-defined tactical intensities
+  // Apply user-defined tactical intensities to the 1X2 expected goals
   rem_xG1 *= intensity1;
   rem_xG2 *= intensity2;
   
   // Match outcomes for the remainder of the match (0:0 virtual start) - used for live AH
-  // We use the same pre-match calibrated 'rho' to ensure consistency
-  const rem = calculateMatchOutcomes(rem_xG1, rem_xG2, 0, 0, rho);
+  // We use the raw, unadjusted (or mildly adjusted) remaining xG to keep AH markets 
+  // sticky to their pre-match evaluations, avoiding the extreme "park the bus" distortions of 1X2.
+  const rem = calculateMatchOutcomes(raw_rem_xG1, raw_rem_xG2, 0, 0, rho);
   
-  // Match outcomes for the full match considering current score - used for 1X2
+  // Match outcomes for the full match considering current score and tactical modifiers - used for 1X2
   const full = calculateMatchOutcomes(rem_xG1, rem_xG2, score1, score2, rho);
   
   const liveP1 = full.p1;
