@@ -17,6 +17,9 @@ export interface MatchInput {
   liveP2?: number;
   intensity1: number;
   intensity2: number;
+  league?: string;
+  team1?: string;
+  team2?: string;
 }
 
 export interface PreMatchResult {
